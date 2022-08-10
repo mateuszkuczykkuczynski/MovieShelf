@@ -53,12 +53,18 @@ def pagination(request, query, page_number):
     return HttpResponse(template.render(context, request))
 
 
-def movieDetails(request, imbd_id):
-    if Movie.objects.filter(imdbID=imbd_id).exists():
-        movie_data = Movie.objects.get(imdbID=imbd_id)
+def movieDetails(request, imdb_id):
+    if Movie.objects.filter(imdbID=imdb_id).exists():
+        movie_data = Movie.objects.get(imdbID=imdb_id)
         site_database = True
+
+        context = {
+            'movie_data': movie_data,
+            'site_database': site_database,
+        }
+
     else:
-        url = (f"http://www.omdbapi.com/?i=tt3896198&apikey={OMDB_API_KEY}&i=" + imbd_id)
+        url = (f"http://www.omdbapi.com/?apikey={OMDB_API_KEY}&i=" + imdb_id)
         response = requests.get(url)
         movie_data = response.json()
 
@@ -66,9 +72,9 @@ def movieDetails(request, imbd_id):
         genre_objects = []
         rating_objects = []
 
-        actors_list = [x.strip() for x in movie_data['Actors'].split(',')]
+        actor_list = [x.strip() for x in movie_data['Actors'].split(',')]
 
-        for actor in actors_list:
+        for actor in actor_list:
             a, created = Actor.objects.get_or_create(name=actor)
             actor_objects.append(a)
 
