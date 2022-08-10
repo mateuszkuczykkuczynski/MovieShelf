@@ -22,7 +22,7 @@ class Actor(models.Model):
     name = models.CharField(max_length=80, unique=True)
     picture = models.ImageField(blank=True)
     slug = models.SlugField(null=True, unique=True)
-    movies = models.ManyToManyField('movie.Movie')
+    movies = models.ManyToManyField('scenario.Movie')
 
     def __str__(self):
         return self.name
