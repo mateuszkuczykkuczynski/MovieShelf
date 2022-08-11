@@ -27,6 +27,10 @@ class Actor(models.Model):
     slug = models.SlugField(null=True, unique=True)
     movies = models.ManyToManyField('scenario.Movie')
 
+    @staticmethod
+    def get_absolute_url(self):
+        return reverse('actors', args=[self.slug])
+
     def __str__(self):
         return self.name
 
@@ -39,6 +43,10 @@ class Actor(models.Model):
 class Genre(models.Model):
     title = models.CharField(max_length=50)
     slug = models.SlugField(null=False, unique=True)
+
+    @staticmethod
+    def get_absolute_url(self):
+        return reverse('genres', args=[self.slug])
 
     def __str__(self):
         return self.title

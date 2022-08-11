@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.template import loader
 import os
 import requests
 from scenario.models import Movie, Actor, Genre, Rating
 from django.utils.text import slugify
+from django.core.paginator import Paginator
 
 OMDB_API_KEY = os.environ.get('OMDB_API_KEY')
 
@@ -137,7 +138,7 @@ def movieDetails(request, imdb_id):
                 imdbVotes=movie_data['imdbVotes'],
                 imdbID=movie_data['imdbID'],
                 Type=movie_data['Type'],
-                totalSeasons=movie_data['totalSeasons'],
+                totalSeasons=movie_data['totalSeasons']
             )
 
             m.Genre.set(genre_objects)
@@ -160,3 +161,41 @@ def movieDetails(request, imdb_id):
         template = loader.get_template('movie_details.html')
 
         return HttpResponse(template.render(context, request))
+
+
+def genres(request, genre_slug):
+    genre = get_object_or_404(Genre, slug=genre_slug)
+    movies = Movie.objects.filter(Genre=genre)
+
+    paginator = Paginator(movies, 9)
+    page_number = request.GET.get('page')
+    movie_data = paginator.get_page(page_number)
+
+    context = {
+        'movie_data': movie_data,
+        'genre': genre
+    }
+
+    template = loader.get_template('genre.html')
+
+    return HttpResponse(template.render(context, request))
+
+
+def actors(request, actor_slug):
+    actor = get_object_or_404(Actor, slug=actor_slug)
+    movies = Movie.objects.filter(Actors=actor)
+
+    paginator = Paginator(movies, 9)
+    page_number = request.GET.get('page')
+    movie_data = paginator.get_page(page_number)
+
+    context = {
+        'movie_data': movie_data,
+        'actor': actor
+    }
+
+    template = loader.get_template('actors.html')
+
+    return HttpResponse(template.render(context, request))
+
+
