@@ -1,0 +1,14 @@
+{% block content %}
+
+<h1>Are you new in Movie Shelf? You can register here...</h1>
+<br/><br/>
+
+<div class="form-group">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-secondary">Register</button>
+    </form>
+</div>
+
+{% endblock %}
