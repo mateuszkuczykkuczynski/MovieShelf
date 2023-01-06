@@ -11,5 +11,4 @@ urlpatterns = [
     path('genre/<genre_slug>', views.genres, name='genres'),
     path('actors/<actors_slug>', views.actors, name='actors')
 
-
 ]
