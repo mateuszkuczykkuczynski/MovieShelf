@@ -16,8 +16,7 @@ class Profile(models.Model):
     def __str__(self):
         return str(self.user)
 
-    @staticmethod
-    def get_absolute_url():
+    def get_absolute_url(self):
         return reverse('homepage')
 
 
@@ -27,7 +26,6 @@ class Actor(models.Model):
     slug = models.SlugField(null=True, unique=True)
     movies = models.ManyToManyField('scenario.Movie')
 
-    @staticmethod
     def get_absolute_url(self):
         return reverse('actors', args=[self.slug])
 
@@ -44,7 +42,6 @@ class Genre(models.Model):
     title = models.CharField(max_length=50)
     slug = models.SlugField(null=False, unique=True)
 
-    @staticmethod
     def get_absolute_url(self):
         return reverse('genres', args=[self.slug])
 
@@ -67,19 +64,19 @@ class Rating(models.Model):
 
 
 class Movie(models.Model):
-    Title = models.CharField(max_length=200)
+    Title = models.CharField(max_length=1000)
     Year = models.CharField(max_length=25, blank=True)
     Rated = models.CharField(max_length=10, blank=True)
     Released = models.CharField(max_length=25, blank=True)
     Runtime = models.CharField(max_length=25, blank=True)
     Genre = models.ManyToManyField(Genre, blank=True)
-    Director = models.CharField(max_length=100, blank=True)
-    Writer = models.CharField(max_length=300, blank=True)
+    Director = models.CharField(max_length=1000, blank=True)
+    Writer = models.CharField(max_length=1000, blank=True)
     Actors = models.ManyToManyField(Actor, blank=True)
     Plot = models.CharField(max_length=900, blank=True)
-    Language = models.CharField(max_length=300, blank=True)
-    Country = models.CharField(max_length=100, blank=True)
-    Awards = models.CharField(max_length=250, blank=True)
+    Language = models.CharField(max_length=1000, blank=True)
+    Country = models.CharField(max_length=1000, blank=True)
+    Awards = models.CharField(max_length=1000, blank=True)
     Poster = models.ImageField(upload_to='movies', blank=True)
     Poster_url = models.URLField(blank=True)
     Ratings = models.ManyToManyField(Rating, blank=True)
@@ -95,7 +92,7 @@ class Movie(models.Model):
     totalSeasons = models.CharField(max_length=3, blank=True)
 
     def __str__(self):
-        return self.title
+        return self.Title
 
     def save(self, *args, **kwargs):
         if self.Poster == '' and self.Poster_url != '':
