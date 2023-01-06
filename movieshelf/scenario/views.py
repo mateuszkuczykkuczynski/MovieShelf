@@ -197,5 +197,3 @@ def actors(request, actor_slug):
     template = loader.get_template('actors.html')
 
     return HttpResponse(template.render(context, request))
-
-
