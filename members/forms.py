@@ -1,5 +1,5 @@
 from django import forms
-from scenario.models import Profile
+from apps.scenario.models import Profile
 
 
 class ProfilePageForm(forms.ModelForm):

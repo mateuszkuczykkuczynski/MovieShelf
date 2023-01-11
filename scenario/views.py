@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.template import loader
 import os
 import requests
-from scenario.models import Movie, Actor, Genre, Rating
+from .models import Movie, Actor, Genre, Rating
 from django.utils.text import slugify
 from django.core.paginator import Paginator
 
