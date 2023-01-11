@@ -3,7 +3,7 @@ from django.views import generic
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
-from scenario.models import Profile
+from apps.scenario.models import Profile
 from .forms import ProfilePageForm
 
 
