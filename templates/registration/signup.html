@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up{% endblock title %}
+
+{% block content %}
+<h1>Are you new in Movie Shelf? You can sign up here...</h1>
+<br/><br/>
+<div class="form-group">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-secondary">Sign Up</button>
+    </form>
+</div>
+{% endblock %}

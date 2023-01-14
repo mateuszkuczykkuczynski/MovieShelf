@@ -1,5 +1,8 @@
-{% block content %}
+{% extends 'base.html' %}
 
+{% block title %}Log In{% endblock title %}
+
+{% block content %}
 <h1>You can log in here...</h1>
 <br/><br/>
 
@@ -10,7 +13,4 @@
         <button class="btn btn-secondary">Log In</button>
     </form>
 </div>
-<div> Forgot your password? <a href="{% url 'reset_password' %}">Reset password</a>
-</div>
-
 {% endblock %}
