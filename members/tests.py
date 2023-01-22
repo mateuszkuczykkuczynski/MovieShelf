@@ -59,11 +59,31 @@ class UserProfileTests(TestCase):
             password='Letmeout555!'
         )
 
-        self.profile = UserProfile.objects.create(avatar='test_avatar.jpg', socials='hotmomsnearyou.com',
-                                                  bio='netflix is overrated', user=self.user)
+        self.user4 = get_user_model().objects.create_user(
+            username='testuser4',
+            email='testuser4@gmail.com',
+            age=421,
+            password='Letmeout5555!'
+        )
 
-        self.profile2 = UserProfile.objects.create(avatar='test_avatar.jpg', socials='hotmomsnearyou.com',
-                                                   bio='netflix is overrated', user=self.user3)
+        self.profile = UserProfile.objects.create(
+            avatar='test_avatar.jpg',
+            socials='hotmomsnearyou.com',
+            bio='netflix is overrated',
+            user=self.user
+        )
+
+        self.profile3 = UserProfile.objects.create(
+            socials='hotmomsnearyou.com',
+            bio='netflix is overrated',
+            user=self.user3
+        )
+
+        self.profile4 = UserProfile.objects.create(
+            socials='nomomsnearyou.com',
+            bio='netflix is overrated',
+            user=self.user4
+        )
 
     def test_string_representation(self):
         profile = UserProfile(bio='HBO tv app sucks')
@@ -99,8 +119,13 @@ class UserProfileTests(TestCase):
 
     def test_update_user_profile_view(self):
         self.client.login(username='testuser3', password='Letmeout555!')
-        response = self.client.post(reverse('update_user_profile', args='3'),
+        response = self.client.post(reverse('update_user_profile', kwargs={'pk': self.profile3.pk}),
                                     {'socials': 'hottestmomsnearyou.com',
                                      'bio': 'CP2077 was not that bad',
                                      })
+        self.assertEqual(response.status_code, 302)
+
+    def test_delete_user_profile_view(self):
+        self.client.login(username='testuser4', password='Letmeout5555!')
+        response = self.client.post(reverse('delete_user_profile', kwargs={'pk': self.profile4.pk}))
         self.assertEqual(response.status_code, 302)
