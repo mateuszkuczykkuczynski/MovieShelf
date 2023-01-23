@@ -9,7 +9,7 @@ class CustomUser(AbstractUser):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(get_user_model(), null=True, on_delete=models.CASCADE, related_name='profiles')
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, primary_key=True, related_name='profiles')
     avatar = models.ImageField(upload_to='media/', null=True, blank=True)
     socials = models.CharField(max_length=200, null=True, blank=True)
     bio = models.TextField()
@@ -18,6 +18,5 @@ class UserProfile(models.Model):
         return str(self.user)
 
     def get_absolute_url(self):
-        return reverse('user_profile', args=[str(self.id)])
-
+        return reverse('user_profile', args=[str(self.pk)])
 
