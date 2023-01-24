@@ -1,15 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView
 from .forms import CustomUserCreationForm
 from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, render
+
 from .models import UserProfile
-
-
-from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
-# from django.shortcuts import render, get_object_or_404
-# from django.contrib.auth.views import PasswordChangeView
-# from scenario.models import Profile
-# from .forms import ProfilePageForm
 
 
 class UserSignUpView(CreateView):
@@ -32,38 +27,41 @@ class UpdateProfileView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = UserProfile
     template_name = 'edit_user_profile.html'
     fields = ['avatar', 'socials', 'bio']
-    success_url = reverse_lazy('user_profile_details')
 
     def test_func(self):
         obj = self.get_object()
         return obj.user == self.request.user
+
+    def get_success_url(self):
+        return reverse_lazy('user_profile', kwargs={'pk': self.object.pk})
 
 
 class DeleteProfileView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = UserProfile
     template_name = 'delete_user_profile.html'
-    success_url = reverse_lazy('user_profile_details')
 
     def test_func(self):
         obj = self.get_object()
         return obj.user == self.request.user
+
+    def get_success_url(self):
+        return reverse_lazy('create_user_profile')
 
 
 class ProfileDetailsView(LoginRequiredMixin, DetailView):
     model = UserProfile
     template_name = 'user_profile_details.html'
 
+    def get(self, request, **kwargs):
 
-# class ProfilePageView(generic.DetailView):
-#     model = Profile
-#     template_name = 'registration/user_profile.html'
-#
-#     def get_context_data(self, *args, **kwargs):
-#         users = Profile.objects.all()
-#         context = super(ProfilePageView, self).get_context_data(*args, **kwargs)
-#
-#         page_user = get_object_or_404(Profile, id=self.kwargs['pk'])
-#
-#         context["page_user"] = page_user
-#         return context
+        profile = get_object_or_404(UserProfile, pk=kwargs.get('pk'))
+        context = {'profile': profile}
+        return render(request, self.template_name, context)
+
+
+class ProfileListView(LoginRequiredMixin, ListView):
+    model = UserProfile
+    template_name = 'user_profiles_list.html'
+    context_object_name = 'all_users_profiles'
+
 
