@@ -1,4 +1,4 @@
-{% extends 'homepage.html' %}
+{% extends 'base.html' %}
 {% block content %}
 
 {% if user.is_authenticated %}
@@ -7,7 +7,7 @@
         <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-        <button class="btn btn-secondary">Update Profile Details</button>
+        <button class="btn btn-secondary">Delete Your Profile Page</button>
         </form>
     </div>
 
