@@ -22,21 +22,35 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#">My Shelf</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Couch</a>
-                    </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false">
                             Profile
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">My Profile</a></li>
-                            <li><a class="dropdown-item" href="{% url 'password_change' %}">Change Password</a></li>
+                            {% if user.profiles.pk %}
+                                <li><a class="dropdown-item" href="{% url 'user_profile' pk=user.pk %}">My Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'update_user_profile' pk=user.pk %}">Edit My Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'delete_user_profile' pk=user.pk %}">Delete My Profile</a></li>
+                            {% else %}
+                                <li><a class="dropdown-item" href="{% url 'create_user_profile' %}">Create Profile</a></li>
+                            {% endif %}
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
+                            <li><a class="dropdown-item" href="{% url 'password_change' %}">Change Password</a></li>
+
                             <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Couch
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'users_profiles_list' %}">Club members</a></li>
+                            <li><a class="dropdown-item" href="#">DVD Disc Reader</a></li>
                         </ul>
                     </li>
                 </ul>
