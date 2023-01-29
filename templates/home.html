@@ -2,5 +2,15 @@
 
 {% block title %}Home{% endblock title %}
 
+
+
 {% block content %}
+    <body>
+    <div class="d-flex align-items-center justify-content-center vh-100 flex-column gap-4">
+        <form class="d-flex">
+            <input class="form-control me-1" type="search" placeholder="Search" aria-label="Search" name="q" value="{{ request.GET.q }}">
+            <button class="btn btn-primary" type="submit" >Search</button>
+        </form>
+    </div>
+    </body>
 {% endblock content %}
