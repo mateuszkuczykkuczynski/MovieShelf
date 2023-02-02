@@ -88,6 +88,7 @@ class Movie(models.Model):
     BoxOffice = models.CharField(max_length=50, blank=True)
     Production = models.CharField(max_length=50, blank=True)
     Website = models.CharField(max_length=100, blank=True)
+    totalSeasons = models.CharField(max_length=3, blank=True)
 
     def __str__(self):
         return self.Title
