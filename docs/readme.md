@@ -6,4 +6,4 @@ Project will be refactored because there is a lot of staff missing.
 - Project structure need refactorization (that one is almost done)
 - Containerization using Docker will be added
 - Deploy on Cloud Platform 
-- Nicer frontend... 
+- Nicer frontend... (React propably)
