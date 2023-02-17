@@ -1,0 +1,8 @@
+<p>{{ writer.name }}</p>
+{% if writer_movies %}
+    {% for movie in writer_movies %}
+        <p>{{ movie }}</p>
+    {% endfor %}
+{% else %}
+    <p>None movies in db connected with this writer/writers</p>
+{% endif %}
