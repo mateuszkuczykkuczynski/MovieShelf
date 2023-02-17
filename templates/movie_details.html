@@ -1,15 +1,37 @@
 {% extends 'base.html' %}
-              <span class="card-title"><b>{{ movie.Title }}</b></span>
-              <span>{{ movie_data.Type }}</span>
-              <br>
-              <p>{{ movie.Plot }}</p>
-              <br>
-              <div class="divider"></div>
-              <span>Year: <b>{{ movie.Year }}</b></span>
-              <span class="right">Rated: <b>{{ movie.Rated }}</b></span>
-              <p>Released: <b>{{ movie.Released }}</b></p>
-              <p>Runtime: <b>{{ movie.Runtime }}</b></p>
-
+{% block content %}
+    <p><b>Title: {{ result.Title }}</b></p>
+    <p>Type: <b>{{ result.Type }}</b></p>
+    <p>Plot: <b>{{ result.Plot }}</b></p>
+    <p>Year: <b>{{ result.Year }}</b></p>
+    <p>Rated: <b>{{ result.Rated }}</b></p>
+    <p>Released: <b>{{ result.Released }}</b></p>
+    <p>Language: <b>{{ result.Language }}</b></p>
+    <p>Country: <b>{{ result.Country }}</b></p>
+    <p>Awards: <b>{{ result.Awards }}</b></p>
+    <p>imdRating: <b>{{ result.imdbRating }}</b></p>
+    <p>imdbVotes: <b>{{ result.imdbVotes }}</b></p>
+    <p>BoxOffice: <b>{{ result.BoxOffice }}</b></p>
+    <p>Production: <b>{{ result.Production }}</b></p>
+    <p>Website: <b>{{ result.Website }}</b></p>
+    {% if our_db is True %}
+        <p>Poster: <b><img src="{{ result.Poster.url }}" alt=""></b></p>
+        <p>Genre: <b>{% for genre in result.Genre.all %}</b> {{ genre }} {%  endfor %}</p>
+        <p>Actors: <b>{% for actor in result.Actors.all %}</b> {{ actor }} {%  endfor %}</p>
+        <p>Director: <b>{% for director in result.Director.all %}</b> {{ director }} {% endfor %}</p>
+        <p>Writer: <b>{% for writer in result.Writer.all %}</b> {{ writer }} {%  endfor %}</p>
+        <p>Rating: <b>{% for rating in result.Rating.all %}</b> {{ rating }} {{ rating.value }}{% endfor %}
+    {% else %}
+        <p>Poster: <b><img src="{{ result.Poster }}" alt=""></b></p>
+        <p>Genre: <b> {{ result.Genre }} </b></p>
+        <p>Actors: <b>{{ result.Actors }}</b></p>
+        <p>Director: <b>{{ result.Director }}</b></p>
+        <p>Writer: <b>{{ result.Writer }}</b></p>
+        <p>Rating: <b>{{ result.Ratings.0.Source }} {{ result.Ratings.0.Value }}</b>
+        <p>Rating: <b>{{ result.Ratings.1.Source }} {{ result.Ratings.1.Value }}</b>
+        <p>Rating: <b>{{ result.Ratings.2.Source }} {{ result.Ratings.2.Value }}</b>
+    {% endif %}
+{% endblock %}
 
 
 
