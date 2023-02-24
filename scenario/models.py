@@ -5,6 +5,8 @@ from django.urls import reverse
 from io import BytesIO
 from django.core import files
 from django.utils.text import slugify
+from members.models import UserProfile
+
 from django.core.files import File  # you need this somewhere
 import urllib
 import os
@@ -132,5 +134,12 @@ class Movie(models.Model):
         #     self.Poster.save(self.Poster_url.split("/")[-1], image_file, save=True)
 
 
+class WatchedByUser(models.Model):
+    user = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='watched_by_user')
+    watched = models.ManyToManyField(Movie, related_name='watched_position')
 
+
+class ToWatchByUser(models.Model):
+    user = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='to_watch_by_user')
+    to_watch = models.ManyToManyField(Movie, related_name='position_to_watch')
 
