@@ -7,7 +7,11 @@ import requests
 from django.shortcuts import render, get_object_or_404
 from environs import Env
 from django.utils.text import slugify
-from .models import Movie, Actor, Genre, Rating, Director, Writer
+from .models import Movie, Actor, Genre, Rating, Director, Writer, WatchedByUser, ToWatchByUser
+from django.views.generic import ListView, CreateView
+from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 env = Env()
 env.read_env()
@@ -167,3 +171,30 @@ def genre_detail_view(request, genre_slug):
     genre_results = genre.movie_genre.values_list("Title", flat=True)
     return render(request, 'genre_details.html', {'genre': genre,
                                                   'genre_results': genre_results})
+
+
+class PositionsWatchedByUserView(ListView):
+    model = WatchedByUser
+    template_name = "watched_by_user.html"
+    context_object_name = "watched_all"
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        user = get_object_or_404(get_user_model(), id=user_id)
+        return user.watched_position.all()
+
+
+class PositionsToWatchByUserView(ListView):
+    model = ToWatchByUser
+    template_name = "to_watch_by_user.html"
+    context_object_name = "to_watch_all"
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        user = get_object_or_404(get_user_model(), id=user_id)
+        return user.position_to_watch.all()
+
+
+class PositionAddWatchedView(LoginRequiredMixin, CreateView):
+    model = WatchedByUser
+    fields = ['movies']
