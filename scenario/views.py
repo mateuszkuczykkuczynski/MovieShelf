@@ -11,7 +11,8 @@ from .models import Movie, Actor, Genre, Rating, Director, Writer, WatchedByUser
 from django.views.generic import ListView, CreateView
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from .forms import WatchedForm, ToWatchForm
+from members.models import UserProfile
 
 env = Env()
 env.read_env()
@@ -38,10 +39,63 @@ def movie_details_view(request, result_id):
         api_data = Movie.objects.get(imdbID=result_id)
         our_db = True
 
+        watched_form = WatchedForm(prefix='watched')
+        to_watch_form = ToWatchForm(prefix='to_watch')
+
+        if request.method == 'POST':
+            if 'watched' in request.POST:
+                watched_form = WatchedForm(request.POST, prefix='watched')
+
+                if watched_form.is_valid():
+                    user = request.user
+                    user_profile = UserProfile.objects.get(user=user)
+                    watched_by_user, created = WatchedByUser.objects.get_or_create(user=user_profile)
+                    if created:
+                        watched_by_user.save()
+
+                    watched_by_user.watched.add(api_data)
+                to_watch_form = ToWatchForm(prefix='to_watch')
+
+            elif 'towatch' in request.POST:
+                to_watch_form = ToWatchForm(request.POST, prefix='to_watch')
+
+                if to_watch_form.is_valid():
+                    user = request.user
+                    user_profile = UserProfile.objects.get(user=user)
+                    to_watch_by_user, created = ToWatchByUser.objects.get_or_create(user=user_profile)
+                    if created:
+                        to_watch_by_user.save()
+
+                    to_watch_by_user.to_watch.add(api_data)
+                to_watch_form = ToWatchForm(prefix='to_watch')
+
+        else:
+            watched_form = WatchedForm(prefix='watched')
+            to_watch_form = ToWatchForm(prefix='to_watch')
+
         context = {
             'result': api_data,
             'our_db': our_db,
+            'watched_form': watched_form,
+            'to_watch_form': to_watch_form,
         }
+
+        #     form = WatchedForm(request.POST)
+        #
+            # if form.is_valid():
+            #     user = request.user
+            #     user_profile = UserProfile.objects.get(user=user)
+            #     watched_by_user, created = WatchedByUser.objects.get_or_create(user=user_profile)
+        #
+                # if created:
+                #     watched_by_user.save()
+                #
+                # watched_by_user.watched.add(api_data)
+        #
+        # else:
+        #     form = WatchedForm()
+        #
+
 
     else:
         url = f"https://www.omdbapi.com/?apikey={OMDB_API_KEY}&i={result_id}"
@@ -180,8 +234,11 @@ class PositionsWatchedByUserView(ListView):
 
     def get_queryset(self):
         user_id = self.kwargs['user_id']
-        user = get_object_or_404(get_user_model(), id=user_id)
-        return user.watched_position.all()
+        # user_profile = get_object_or_404(UserProfile, pk=user_id)
+        # watched_movies = user_profile.watched_by_user.watched.all()
+        user_profile = UserProfile.objects.get(user=user_id)
+        watched_movies = user_profile.watched_by_user.watched.all()
+        return watched_movies
 
 
 class PositionsToWatchByUserView(ListView):
@@ -191,10 +248,7 @@ class PositionsToWatchByUserView(ListView):
 
     def get_queryset(self):
         user_id = self.kwargs['user_id']
-        user = get_object_or_404(get_user_model(), id=user_id)
-        return user.position_to_watch.all()
+        user_profile = UserProfile.objects.get(user=user_id)
+        to_watch_movies = user_profile.to_watch_by_user.to_watch.all()
+        return to_watch_movies
 
-
-class PositionAddWatchedView(LoginRequiredMixin, CreateView):
-    model = WatchedByUser
-    fields = ['movies']
