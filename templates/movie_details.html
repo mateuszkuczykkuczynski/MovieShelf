@@ -14,14 +14,24 @@
     <p>BoxOffice: <b>{{ result.BoxOffice }}</b></p>
     <p>Production: <b>{{ result.Production }}</b></p>
     <p>Website: <b>{{ result.Website }}</b></p>
+    <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" name="watched">Watched</button>
+            <button type="submit" name="towatch">To Watch</button>
+    </form>
     {% if our_db is True %}
         <p>Poster: <b><img src="{{ result.Poster.url }}" alt=""></b></p>
-        <p>Genre: <b>{% for genre in result.Genre.all %}</b> <a href="{{ genre.get_absolute_url }}" >{{ genre }} </a> {%  endfor %}</p>
-        <p>Actors: <b>{% for actor in result.Actors.all %}</b>  <a href="{{ actor.get_absolute_url }}" > {{ actor }} </a>{%  endfor %}</p>
-        <p>Director: <b>{% for director in result.Director.all %} </b> <a href="{{ director.get_absolute_url }}" > {{ director }}</a> {% endfor %}</p>
-        <p>Writer: <b>{% for writer in result.Writer.all %}</b> <a href="{{ writer.get_absolute_url }}" >{{ writer }}</a> {%  endfor %}</p>
+        <p>Genre: <b>{% for genre in result.Genre.all %}</b>
+            <a href="{{ genre.get_absolute_url }}">{{ genre }} </a> {% endfor %}</p>
+        <p>Actors: <b>{% for actor in result.Actors.all %}</b>
+            <a href="{{ actor.get_absolute_url }}"> {{ actor }} </a>{% endfor %}</p>
+        <p>Director: <b>{% for director in result.Director.all %} </b>
+            <a href="{{ director.get_absolute_url }}"> {{ director }}</a> {% endfor %}</p>
+        <p>Writer: <b>{% for writer in result.Writer.all %}</b>
+            <a href="{{ writer.get_absolute_url }}">{{ writer }}</a> {% endfor %}</p>
         <p>Rating: <b>{% for rating in result.Rating.all %}</b> {{ rating }} {{ rating.value }}{% endfor %}
-    {% else %}
+   {% else %}
         <p>Poster: <b><img src="{{ result.Poster }}" alt=""></b></p>
         <p>Genre: <b> {{ result.Genre }} </b></p>
         <p>Actors: <b>{{ result.Actors }}</b></p>

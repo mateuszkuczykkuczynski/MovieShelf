@@ -1,0 +1,12 @@
+{% block title %}Positions watched by user{% endblock title %}
+
+{% block content %}
+
+        <h1>Here yuo can find all positions form THIS user shelf</h1>
+        <body>
+            {% for pos in to_watch_all %}
+                <a>{{ pos }}</a>
+            {% endfor %}
+        </body>
+
+{% endblock content %}
