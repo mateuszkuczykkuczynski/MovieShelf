@@ -1,5 +1,5 @@
-# from django.http import HttpResponse
-# from django.template import loader
+# from django.contrib.auth import get_user_model
+# from django.contrib.auth.mixins import LoginRequiredMixin
 # from django.utils.text import slugify
 # from django.core.paginator import Paginator
 
@@ -8,9 +8,7 @@ from django.shortcuts import render, get_object_or_404
 from environs import Env
 from django.utils.text import slugify
 from .models import Movie, Actor, Genre, Rating, Director, Writer, WatchedByUser, ToWatchByUser
-from django.views.generic import ListView, CreateView
-from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView
 from .forms import WatchedForm, ToWatchForm
 from members.models import UserProfile
 
