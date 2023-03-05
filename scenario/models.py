@@ -111,12 +111,21 @@ class Movie(models.Model):
     Production = models.CharField(max_length=50, blank=True)
     Website = models.CharField(max_length=500, blank=True)
     totalSeasons = models.CharField(max_length=30, blank=True)
+    WebsiteUsersRating = models.ManyToManyField(UserProfile, through='MovieShelfRating')
 
     def __str__(self):
         return self.Title
 
     def get_absolute_url(self):
         return reverse('movie_details', args=[self.imdbID])
+
+    # @property
+    # def average_rating(self):
+    #     shelf_ratings = self.WebsiteUsersRating.all()
+    #     if shelf_ratings:
+    #         return sum(rating.rating for rating in shelf_ratings) / len(shelf_ratings)
+    #     else:
+    #         return None
 
     def save(self, *args, **kwargs):
         if self.Poster == '' and self.Poster_url != '':
@@ -143,3 +152,13 @@ class ToWatchByUser(models.Model):
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='to_watch_by_user')
     to_watch = models.ManyToManyField(Movie, related_name='position_to_watch')
 
+
+class MovieShelfRating(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='users_rating')
+    position = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='website_rating')
+    rating = models.IntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'position'], name='unique_ratings')
+        ]
