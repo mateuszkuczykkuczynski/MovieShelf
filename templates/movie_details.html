@@ -16,9 +16,27 @@
     <p>Website: <b>{{ result.Website }}</b></p>
     <form method="POST">
             {% csrf_token %}
-            {{ form.as_p }}
+
+            {{ watched_form.as_p }}
             <button type="submit" name="watched">Watched</button>
-            <button type="submit" name="towatch">To Watch</button>
+    </form>
+
+    <form method="POST">
+            {% csrf_token %}
+
+            {{ to_watch_form.as_p }}
+            <button type="submit" name="to_watch">To Watch</button>
+    </form>
+
+    <form method="POST">
+            {% csrf_token %}
+
+            {{ website_ratings_form.as_p }}
+            <button type="submit" name="website_ratings">Rate</button>
+
+            {% if error_message %}
+                <p class="error">{{ error_message }}</p>
+            {% endif %}
     </form>
     {% if our_db is True %}
         <p>Poster: <b><img src="{{ result.Poster.url }}" alt=""></b></p>
@@ -30,7 +48,8 @@
             <a href="{{ director.get_absolute_url }}"> {{ director }}</a> {% endfor %}</p>
         <p>Writer: <b>{% for writer in result.Writer.all %}</b>
             <a href="{{ writer.get_absolute_url }}">{{ writer }}</a> {% endfor %}</p>
-        <p>Rating: <b>{% for rating in result.Rating.all %}</b> {{ rating }} {{ rating.value }}{% endfor %}
+        <p>Rating: <b>{% for rating in result.Rating.all %}</b> {{ rating }} {{ rating.value }}{% endfor %} </p>
+        <p>MovieShelf Users Rating: <b>{{ avg_rating }}</b></p>
    {% else %}
         <p>Poster: <b><img src="{{ result.Poster }}" alt=""></b></p>
         <p>Genre: <b> {{ result.Genre }} </b></p>
