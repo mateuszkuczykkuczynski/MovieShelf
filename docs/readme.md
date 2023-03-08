@@ -1,6 +1,6 @@
 ##### Still in progres, more details coming soon. #####
-##### 02.03.2023 Update #####
-Backend for app is almost ready. Last thing to add is rating system.
+##### 08.03.2023 Update #####
+All backend code funcionality is done. Next steps are add more tests, a little refactorization and clean some code to make it look FANCY.
   
 Project will be refactored because there is some staff missing. 
 - Code should be cleaner (some progress on that one)
