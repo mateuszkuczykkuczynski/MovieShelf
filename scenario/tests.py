@@ -1,9 +1,10 @@
-from django.test import SimpleTestCase, TestCase
+from django.test import SimpleTestCase, TestCase, Client
 from django.urls import reverse
-from .models import Movie, Genre, Director, Writer, Actor, Rating, MovieShelfRating, WatchedByUser
+from .models import Movie, Genre, Director, Writer, Actor, Rating, MovieShelfRating, WatchedByUser, ToWatchByUser
 from members.models import UserProfile
 from django.contrib.auth import get_user_model
 from .forms import WatchedForm, ToWatchForm
+import unittest
 
 
 class HomePageTests(SimpleTestCase):
@@ -61,7 +62,6 @@ class HomePageTests(SimpleTestCase):
 
 
 class MovieDetailsViewTests(TestCase):
-
     result_id_1 = 'tt1285016'
     result_id_2 = 'tt2975590'
     result_id_not_exists = 'tt1234567890'
@@ -142,34 +142,35 @@ class MovieDetailsViewTests(TestCase):
 class MovieDetailsViewFormsTests(TestCase):
 
     def setUp(self):
+        self.client = Client()
         self.user = get_user_model().objects.create_user(
             username='testuser',
             email='test@email.com',
             password='secret'
         )
-
+        self.user_profile = UserProfile.objects.create(user=self.user)
         self.movie1 = Movie.objects.create(Title='Test Movie',
-                                          Year='2023',
-                                          Rated='18',
-                                          Released='10 Feb 2023',
-                                          Runtime='169',
-                                          Plot='Life of best dog ever.',
-                                          Language='English',
-                                          Country='Poland',
-                                          Awards='Oscar',
-                                          Poster='posters/test_movie.jpg',
-                                          Poster_url='https://www.test.com/test_movie.jpg',
-                                          Metascore='75',
-                                          imdbRating='7.6',
-                                          imdbVotes='12,345',
-                                          imdbID='tt1234567',
-                                          Type='movie',
-                                          DVD='N/A',
-                                          BoxOffice='21370000 $',
-                                          Production='Pixel Studio',
-                                          Website='https://www.pixelslife.com',
-                                          totalSeasons='',
-                                          )
+                                           Year='2023',
+                                           Rated='18',
+                                           Released='10 Feb 2023',
+                                           Runtime='169',
+                                           Plot='Life of best dog ever.',
+                                           Language='English',
+                                           Country='Poland',
+                                           Awards='Oscar',
+                                           Poster='posters/test_movie.jpg',
+                                           Poster_url='https://www.test.com/test_movie.jpg',
+                                           Metascore='75',
+                                           imdbRating='7.6',
+                                           imdbVotes='12,345',
+                                           imdbID='tt1234567',
+                                           Type='movie',
+                                           DVD='N/A',
+                                           BoxOffice='21370000 $',
+                                           Production='Pixel Studio',
+                                           Website='https://www.pixelslife.com',
+                                           totalSeasons='',
+                                           )
 
         self.movie2 = Movie.objects.create(Title='Test Movie2',
                                            Year='2023',
@@ -193,6 +194,16 @@ class MovieDetailsViewFormsTests(TestCase):
                                            Website='https://www.pixelslife.com',
                                            totalSeasons='',
                                            )
+
+        self.rating_data = {
+            'user': self.user_profile,
+            'position': self.movie1,
+            'rating': 4
+        }
+
+    def test_movieshelf_rating_form_valid_data(self):
+        response = self.client.post('/scenario/result/tt1234567')
+
 
     def test_form_add_to_watched_valid_data(self):
         form = WatchedForm(data=self.movie1.pk)
@@ -325,3 +336,217 @@ class GenreDetailsViewTests(TestCase):
     def test_genre_details_view_displays_genre_details(self):
         response = self.client.get(f'/scenario/genre/{self.genre.slug}')
         self.assertContains(response, self.genre.genre_type)
+
+
+class PositionsWatchedByUserViewTests(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+
+        self.user = get_user_model().objects.create_user(
+            username='testuser2',
+            email='test2@email.com',
+            password='secret2'
+        )
+        self.user2 = get_user_model().objects.create_user(
+            username='testuser3',
+            email='test3@email.com',
+            password='secret3'
+        )
+
+        self.movie1 = Movie.objects.create(Title='TestMovie3',
+                                           Year='2024',
+                                           Rated='18',
+                                           Released='10 Feb 2023',
+                                           Runtime='169',
+                                           Plot='Life of best dog ever.',
+                                           Language='English',
+                                           Country='Poland',
+                                           Awards='Oscar',
+                                           Poster='posters/test_movie.jpg',
+                                           Poster_url='https://www.test.com/test_movie.jpg',
+                                           Metascore='75',
+                                           imdbRating='7.6',
+                                           imdbVotes='12,345',
+                                           imdbID='tt1234590',
+                                           Type='movie',
+                                           DVD='N/A',
+                                           BoxOffice='21372137 $',
+                                           Production='Pixel Studio 3',
+                                           Website='https://www.pixelslifeisgreat.com',
+                                           totalSeasons='',
+                                           )
+
+        self.movie2 = Movie.objects.create(Title='TestMovie4',
+                                           Year='2024',
+                                           Rated='18',
+                                           Released='10 Feb 2023',
+                                           Runtime='169',
+                                           Plot='Life of best dog ever.',
+                                           Language='English',
+                                           Country='Poland',
+                                           Awards='Oscar',
+                                           Poster='posters/test_movie.jpg',
+                                           Poster_url='https://www.test.com/test_movie.jpg',
+                                           Metascore='75',
+                                           imdbRating='7.6',
+                                           imdbVotes='12,345',
+                                           imdbID='tt1234599',
+                                           Type='movie',
+                                           DVD='N/A',
+                                           BoxOffice='21374102 $',
+                                           Production='Pixel Studio 4',
+                                           Website='https://www.pixelslifeisthebest.com',
+                                           totalSeasons='',
+                                           )
+
+        self.user_profile = UserProfile.objects.create(user=self.user)
+        self.watched_by_user = WatchedByUser.objects.create(user=self.user_profile)
+        self.watched_by_user.watched.add(self.movie1)
+        self.watched_by_user.watched.add(self.movie2)
+
+        self.user_profile2 = UserProfile.objects.create(user=self.user2)
+        self.watched_by_user2 = WatchedByUser.objects.create(user=self.user_profile2)
+
+    def test_position_watched_by_user_view_returns_200(self):
+        response = self.client.get(f'/scenario/users/{self.user.id}/watched')
+        self.assertEqual(response.status_code, 200)
+
+    def test_position_watched_by_user_view_returns_200_by_url_name(self):
+        response = self.client.get(reverse('watched_by_user', args=[self.user.id]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_position_watched_by_user_view_uses_correct_template(self):
+        response = self.client.get(reverse('watched_by_user', args=[self.user.id]))
+        self.assertTemplateUsed(response, 'watched_by_user.html')
+
+    def test_position_watched_by_user_view_display_correct_positions(self):
+        # self.client.login(username='testuser2', password='secret2')
+        response = self.client.get(f'/scenario/users/{self.user.id}/watched')
+        content = response.content.decode().replace(' ', '').replace('\n', '')
+        self.assertRegex(content, f"{self.movie1.Title}.*{self.movie2.Title}")
+
+    def test_position_watched_by_user_view_contains_correct_positions_number(self):
+        # self.client.login(username='testuser2', password='secret2')
+        response = self.client.get(f'/scenario/users/{self.user.id}/watched')
+        self.assertEqual(response.context['watched_all'].count(), 2)
+
+    def test_position_watched_by_user_view_no_watched_positions(self):
+        # self.client.login(username='testuser3', password='secret3')
+        response = self.client.get(f'/scenario/users/{self.user2.id}/watched')
+        self.assertContains(response, 'No position watched yet')
+
+    def test_position_watched_by_user_view_no_watched_positions_contains_correct_positions_number(self):
+        response = self.client.get(f'/scenario/users/{self.user2.id}/watched')
+        self.assertEqual(response.context['watched_all'].count(), 0)
+
+    @unittest.expectedFailure
+    def test_position_watched_by_user_invalid_user_id_returns_404(self):
+        self.client.get('/scenario/users/169/watched')
+
+
+class PositionsToWatchByUserViewTests(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+
+        self.user = get_user_model().objects.create_user(
+            username='testuser5',
+            email='test2@email.com',
+            password='secret6'
+        )
+        self.user2 = get_user_model().objects.create_user(
+            username='testuser6',
+            email='test3@email.com',
+            password='secret6'
+        )
+
+        self.movie3 = Movie.objects.create(Title='TestMovie5',
+                                           Year='2025',
+                                           Rated='18',
+                                           Released='10 Feb 2023',
+                                           Runtime='169',
+                                           Plot='Life of best dog ever.',
+                                           Language='English',
+                                           Country='Poland',
+                                           Awards='Oscar',
+                                           Poster='posters/test_movie.jpg',
+                                           Poster_url='https://www.test.com/test_movie.jpg',
+                                           Metascore='75',
+                                           imdbRating='7.6',
+                                           imdbVotes='12,345',
+                                           imdbID='tt1234500',
+                                           Type='movie',
+                                           DVD='N/A',
+                                           BoxOffice='21372137 $',
+                                           Production='Pixel Studio 3',
+                                           Website='https://www.pixelslifeisgreat.com',
+                                           totalSeasons='',
+                                           )
+
+        self.movie4 = Movie.objects.create(Title='TestMovie6',
+                                           Year='2026',
+                                           Rated='18',
+                                           Released='10 Feb 2023',
+                                           Runtime='169',
+                                           Plot='Life of best dog ever.',
+                                           Language='English',
+                                           Country='Poland',
+                                           Awards='Oscar',
+                                           Poster='posters/test_movie.jpg',
+                                           Poster_url='https://www.test.com/test_movie.jpg',
+                                           Metascore='75',
+                                           imdbRating='7.6',
+                                           imdbVotes='12,345',
+                                           imdbID='tt1234511',
+                                           Type='movie',
+                                           DVD='N/A',
+                                           BoxOffice='21374102 $',
+                                           Production='Pixel Studio 4',
+                                           Website='https://www.pixelslifeisthebest.com',
+                                           totalSeasons='',
+                                           )
+
+        self.user_profile = UserProfile.objects.create(user=self.user)
+        self.to_watch_by_user = ToWatchByUser.objects.create(user=self.user_profile)
+        self.to_watch_by_user.to_watch.add(self.movie3)
+        self.to_watch_by_user.to_watch.add(self.movie4)
+
+        self.user_profile2 = UserProfile.objects.create(user=self.user2)
+        self.to_watch_by_user2 = ToWatchByUser.objects.create(user=self.user_profile2)
+
+    def test_position_to_watch_by_user_view_returns_200(self):
+        response = self.client.get(f'/scenario/users/{self.user.id}/to_watch')
+        self.assertEqual(response.status_code, 200)
+
+    def test_position_to_watch_by_user_view_returns_200_by_url_name(self):
+        response = self.client.get(reverse('to_watch_by_user', args=[self.user.id]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_position_to_watch_by_user_view_uses_correct_template(self):
+        response = self.client.get(reverse('to_watch_by_user', args=[self.user.id]))
+        self.assertTemplateUsed(response, 'to_watch_by_user.html')
+
+    def test_position_to_watch_by_user_view_display_correct_positions(self):
+        # self.client.login(username='testuser2', password='secret2')
+        response = self.client.get(f'/scenario/users/{self.user.id}/to_watch')
+        content = response.content.decode().replace(' ', '').replace('\n', '')
+        self.assertRegex(content, f"{self.movie3.Title}.*{self.movie4.Title}")
+
+    def test_position_to_watch_by_user_view_contains_correct_positions_number(self):
+        # self.client.login(username='testuser2', password='secret2')
+        response = self.client.get(f'/scenario/users/{self.user.id}/to_watch')
+        self.assertEqual(response.context['to_watch_all'].count(), 2)
+
+    def test_position_to_watch_by_user_view_no_watched_positions(self):
+        # self.client.login(username='testuser3', password='secret3')
+        response = self.client.get(f'/scenario/users/{self.user2.id}/to_watch')
+        self.assertContains(response, 'No position to watch yet')
+
+    def test_position_to_watch_by_user_view_no_watched_positions_contains_correct_positions_number(self):
+        response = self.client.get(f'/scenario/users/{self.user2.id}/to_watch')
+        self.assertEqual(response.context['to_watch_all'].count(), 0)
+
+    @unittest.expectedFailure
+    def test_position_to_watch_by_user_invalid_user_id_returns_404(self):
+        self.client.get('/scenario/users/169/to_watch')
