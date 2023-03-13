@@ -4,6 +4,7 @@ from .models import Movie, Genre, Director, Writer, Actor, Rating, MovieShelfRat
 from members.models import UserProfile
 from django.contrib.auth import get_user_model
 from .forms import WatchedForm, ToWatchForm
+from django.shortcuts import get_object_or_404
 import unittest
 
 
@@ -196,14 +197,20 @@ class MovieDetailsViewFormsTests(TestCase):
                                            )
 
         self.rating_data = {
+
             'user': self.user_profile,
             'position': self.movie1,
             'rating': 4
         }
 
     def test_movieshelf_rating_form_valid_data(self):
-        response = self.client.post('/scenario/result/tt1234567')
+        self.client.login(username='testuser', password='secret')
+        response = self.client.post('/scenario/result/tt1234567', {'website_ratings': 'True', 'rating': 4})
+        self.assertEqual(response.status_code, 200)
 
+        rating = MovieShelfRating.objects.filter(position='tt1234567').first()
+        self.assertIsNotNone(rating)
+        self.assertEqual(rating.rating, 4)
 
     def test_form_add_to_watched_valid_data(self):
         form = WatchedForm(data=self.movie1.pk)
