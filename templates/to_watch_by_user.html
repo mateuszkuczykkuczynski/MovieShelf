@@ -4,9 +4,13 @@
 
         <h1>Here you can find all positions to watch from this user shelf</h1>
         <body>
+        {% if to_watch_all %}
             {% for pos in to_watch_all %}
                 <a>{{ pos }}</a>
             {% endfor %}
+        {% else %}
+            <h1>No position to watch yet</h1>
+        {% endif %}
         </body>
 
 {% endblock content %}
