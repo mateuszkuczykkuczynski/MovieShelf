@@ -4,9 +4,14 @@
 
         <h1>Here yuo can find all positions form THIS user shelf</h1>
         <body>
-            {% for pos in watched_all %}
-                <a>{{ pos }}</a>
-            {% endfor %}
+            {% if watched_all %}
+                {% for pos in watched_all %}
+                    <a>{{ pos }}</a>
+                {% endfor %}
+            {% else %}
+                <h1>No position watched yet</h1>
+            {% endif %}
+
         </body>
 
 {% endblock content %}
