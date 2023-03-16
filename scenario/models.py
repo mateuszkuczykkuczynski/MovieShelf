@@ -111,7 +111,7 @@ class Movie(models.Model):
     Production = models.CharField(max_length=50, blank=True)
     Website = models.CharField(max_length=500, blank=True)
     totalSeasons = models.CharField(max_length=30, blank=True)
-    WebsiteUsersRating = models.ManyToManyField(UserProfile, through='MovieShelfRating')
+    WebsiteUsersRating = models.ManyToManyField(UserProfile, through='MovieShelfRating', blank=True)
 
     def __str__(self):
         return self.Title
