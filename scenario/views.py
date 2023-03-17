@@ -1,16 +1,18 @@
 # from django.contrib.auth import get_user_model
 # from django.contrib.auth.mixins import LoginRequiredMixin
 # from django.utils.text import slugify
-# from django.core.paginator import Paginator
 
 import requests
 from django.shortcuts import render, get_object_or_404
 from environs import Env
 from django.utils.text import slugify
-from .models import Movie, Actor, Genre, Rating, Director, Writer, WatchedByUser, ToWatchByUser
+from .models import Movie, Actor, Genre, Rating, Director, Writer, WatchedByUser, ToWatchByUser, MovieShelfRating
 from django.views.generic import ListView
-from .forms import WatchedForm, ToWatchForm
+from .forms import WatchedForm, ToWatchForm, MovieShelfRatingsForm
 from members.models import UserProfile
+from django.db.models import Avg
+from django.db import IntegrityError
+
 
 env = Env()
 env.read_env()
@@ -20,12 +22,33 @@ OMDB_API_KEY = env.str("OMDB_API_KEY")
 
 def homepage_view(request):
     query = request.GET.get('q')
+    page_number = request.GET.get('page')
+
+    if page_number is None:
+        page_number = 1
+    else:
+        pass
+
     if query:
-        url = f"https://www.omdbapi.com/?apikey={OMDB_API_KEY}&s={query}"
+        url = f"https://www.omdbapi.com/?apikey={OMDB_API_KEY}&s={query}&page={page_number}"
+
+        results_per_page = 10
         response = requests.get(url)
         results = response.json()
+
+        total_results = int(results['totalResults'])
+        total_pages = (total_results + results_per_page - 1) // results_per_page
+
+        has_next = int(page_number) < total_pages
+        has_previous = int(page_number) > 1
+
         return render(request, 'search_results.html', {
-            'results': results
+            'results': results,
+            'page_number': int(page_number),
+            'has_next': has_next,
+            'has_previous': has_previous,
+            'total_pages': total_pages,
+            'query': query,
         })
 
     return render(request, 'home.html')
@@ -39,6 +62,10 @@ def movie_details_view(request, result_id):
 
         watched_form = WatchedForm(prefix='watched')
         to_watch_form = ToWatchForm(prefix='to_watch')
+        website_ratings_form = MovieShelfRatingsForm(prefix='website_ratings')
+        ratings = MovieShelfRating.objects.filter(position=api_data)
+        avg_rating = ratings.aggregate(Avg('rating'))['rating__avg']
+        error_message = None
 
         if request.method == 'POST':
             if 'watched' in request.POST:
@@ -51,10 +78,11 @@ def movie_details_view(request, result_id):
                     if created:
                         watched_by_user.save()
 
+
                     watched_by_user.watched.add(api_data)
                 to_watch_form = ToWatchForm(prefix='to_watch')
 
-            elif 'towatch' in request.POST:
+            elif 'to_watch' in request.POST:
                 to_watch_form = ToWatchForm(request.POST, prefix='to_watch')
 
                 if to_watch_form.is_valid():
@@ -67,33 +95,45 @@ def movie_details_view(request, result_id):
                     to_watch_by_user.to_watch.add(api_data)
                 to_watch_form = ToWatchForm(prefix='to_watch')
 
+            elif 'website_ratings' in request.POST:
+                website_ratings_form = MovieShelfRatingsForm(request.POST, prefix='website_ratings')
+
+                if website_ratings_form.is_valid():
+                    user = request.user
+                    user_profile = UserProfile.objects.get(user=user)
+                    website_rating = website_ratings_form.save(commit=False)
+                    website_rating.user = user_profile
+                    website_rating.position = api_data
+
+                    try:
+                        website_rating.save()
+                    except IntegrityError as e:
+                        # handle the error
+                        print(f"IntegrityError: {str(e)}")
+                        error_message = 'You have already give a note to this shelf position, you can not do it again.'
+
+                    all_ratings = MovieShelfRating.objects.filter(position=api_data)
+                    avg_rating = all_ratings.aggregate(Avg('rating'))['rating__avg']
+                    # api_data.average_rating = average_rating
+                    # print(average_rating)
+                    # api_data.save()
+
+                website_ratings_form = MovieShelfRatingsForm(prefix='website_ratings')
+
         else:
             watched_form = WatchedForm(prefix='watched')
             to_watch_form = ToWatchForm(prefix='to_watch')
+            website_ratings_form = MovieShelfRatingsForm(prefix='website_ratings')
 
         context = {
             'result': api_data,
             'our_db': our_db,
             'watched_form': watched_form,
             'to_watch_form': to_watch_form,
+            'website_ratings_form': website_ratings_form,
+            'avg_rating': avg_rating,
+            'error_message': error_message,
         }
-
-        #     form = WatchedForm(request.POST)
-        #
-            # if form.is_valid():
-            #     user = request.user
-            #     user_profile = UserProfile.objects.get(user=user)
-            #     watched_by_user, created = WatchedByUser.objects.get_or_create(user=user_profile)
-        #
-                # if created:
-                #     watched_by_user.save()
-                #
-                # watched_by_user.watched.add(api_data)
-        #
-        # else:
-        #     form = WatchedForm()
-        #
-
 
     else:
         url = f"https://www.omdbapi.com/?apikey={OMDB_API_KEY}&i={result_id}"
@@ -192,6 +232,25 @@ def movie_details_view(request, result_id):
         }
 
     return render(request, 'movie_details.html', context)
+
+    #     form = WatchedForm(request.POST)
+    #
+    # if form.is_valid():
+    #     user = request.user
+    #     user_profile = UserProfile.objects.get(user=user)
+    #     watched_by_user, created = WatchedByUser.objects.get_or_create(user=user_profile)
+    #
+    # if created:
+    #     watched_by_user.save()
+    #
+    # watched_by_user.watched.add(api_data)
+    #
+    # else:
+    #     form = WatchedForm()
+    #
+
+    # except IntegrityError as e:
+    #     return render_to_response("movie_details.html", {"message": e.message})
 
 
 def actor_details_view(request, actor_slug):
