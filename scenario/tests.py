@@ -1,65 +1,82 @@
+import unittest
 from django.test import SimpleTestCase, TestCase, Client
 from django.urls import reverse
-from .models import Movie, Genre, Director, Writer, Actor, Rating, MovieShelfRating, WatchedByUser, ToWatchByUser
+from .models import Movie, Genre, Director, Writer, Actor, Rating, WatchedByUser, ToWatchByUser
 from members.models import UserProfile
 from django.contrib.auth import get_user_model
-from .forms import WatchedForm, ToWatchForm
-from django.shortcuts import get_object_or_404
-import unittest
+from .forms import WatchedForm, ToWatchForm, MovieShelfRatingsForm
 
 
-class HomePageTests(SimpleTestCase):
+class HomePageTests(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = get_user_model().objects.create_user(
+            username='testuser1',
+            email='test1@email.com',
+            password='secret1'
+        )
 
     def test_home_page_status_code(self):
+        self.client.login(username='testuser1', password='secret1')
         response = self.client.get('/scenario/')
         self.assertEqual(response.status_code, 200)
 
     def test_view_url_by_name(self):
+        self.client.login(username='testuser1', password='secret1')
         response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
 
     def test_view_uses_correct_template(self):
+        self.client.login(username='testuser1', password='secret1')
         response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'home.html')
 
     def test_home_page_status_code_if_query(self):
+        self.client.login(username='testuser1', password='secret1')
         response = self.client.get('/scenario/?q=test')
         self.assertEqual(response.status_code, 200)
 
     def test_home_page_status_code_if_query_with_two_words(self):
+        self.client.login(username='testuser1', password='secret1')
         response = self.client.get('/scenario/?q=test+test')
         self.assertEqual(response.status_code, 200)
 
     def test_view_uses_correct_template_if_query(self):
+        self.client.login(username='testuser1', password='secret1')
         response = self.client.get('/scenario/?q=test')
         self.assertTemplateUsed(response, 'search_results.html')
 
     def test_view_uses_correct_template_if_with_two_words(self):
+        self.client.login(username='testuser1', password='secret1')
         response = self.client.get('/scenario/?q=test+test')
         self.assertTemplateUsed(response, 'search_results.html')
 
     def test_home_page_status_code_if_query_without_q_param(self):
+        self.client.login(username='testuser1', password='secret1')
         no_response = self.client.get('/scenario/=test')
         self.assertEqual(no_response.status_code, 404)
 
     def test_home_page_status_code_if_empty_query(self):
+        self.client.login(username='testuser1', password='secret1')
         response = self.client.get('/scenario/?q=')
         self.assertEqual(response.status_code, 200)
 
     def test_home_page_templated_used_if_empty_query(self):
+        self.client.login(username='testuser1', password='secret1')
         response = self.client.get('/scenario/?q=')
         self.assertTemplateUsed(response, 'home.html')
 
-    # Add exceptions (key error not 404)
-    # def test_home_page_status_code_if_no_results(self):
-    #     no_response = self.client.get('/scenario/?q=dsadasdasdad')
-    #     self.assertEqual(no_response.status_code, 404)
-    #
-    # # Add exceptions (key error not 404)
-    # def test_home_page_status_code_if_page_not_exists(self):
-    #     no_response = self.client.get('/scenario/?q=test&page=42000')
-    #     self.assertEqual(no_response.status_code, 404)
+    def test_home_page_status_code_if_no_results(self):
+        self.client.login(username='testuser1', password='secret1')
+        no_response = self.client.get('/scenario/?q=dsadasdasdad')
+        self.assertEqual(no_response.status_code, 400)
+
+    def test_home_page_status_code_if_page_not_exists(self):
+        self.client.login(username='testuser1', password='secret1')
+        no_response = self.client.get('/scenario/?q=test&page=42000')
+        self.assertEqual(no_response.status_code, 400)
 
 
 class MovieDetailsViewTests(TestCase):
@@ -134,10 +151,9 @@ class MovieDetailsViewTests(TestCase):
         response = self.client.get(reverse('movie_details', args=[self.result_id_2]))
         self.assertTemplateUsed(response, 'movie_details.html')
 
-    # Add exceptions (key error not 404)
-    # def test_movie_detail_view_status_code_invalid_id(self):
-    #     response = self.client.get(reverse('movie_details', args=[self.result_id_not_exists]))
-    #     self.assertEqual(response.status_code, 404)
+    def test_movie_detail_view_status_code_invalid_id(self):
+        response = self.client.get(reverse('movie_details', args=[self.result_id_not_exists]))
+        self.assertEqual(response.status_code, 400)
 
 
 class MovieDetailsViewFormsTests(TestCase):
@@ -145,11 +161,17 @@ class MovieDetailsViewFormsTests(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = get_user_model().objects.create_user(
-            username='testuser',
-            email='test@email.com',
-            password='secret'
+            username='testuser1234',
+            email='test1234@email.com',
+            password='secret1234'
+        )
+        self.user2 = get_user_model().objects.create_user(
+            username='testuser12345',
+            email='test12345@email.com',
+            password='secret12345'
         )
         self.user_profile = UserProfile.objects.create(user=self.user)
+        self.user_profile2 = UserProfile.objects.create(user=self.user2)
         self.movie1 = Movie.objects.create(Title='Test Movie',
                                            Year='2023',
                                            Rated='18',
@@ -164,7 +186,7 @@ class MovieDetailsViewFormsTests(TestCase):
                                            Metascore='75',
                                            imdbRating='7.6',
                                            imdbVotes='12,345',
-                                           imdbID='tt1234567',
+                                           imdbID='tt1231212',
                                            Type='movie',
                                            DVD='N/A',
                                            BoxOffice='21370000 $',
@@ -196,52 +218,81 @@ class MovieDetailsViewFormsTests(TestCase):
                                            totalSeasons='',
                                            )
 
-        # self.rating_data = {
-        #
-        #     'user': self.user_profile,
-        #     'position': self.movie1,
-        #     'rating': 4
-        # }
-
-    def test_movieshelf_rating_form_valid_data(self):
-        self.client.login(username='testuser', password='secret')
-        self.client.post(f'/scenario/result/{self.movie1.imdbID}', {'website_ratings': 'True', 'user': self.user_profile, 'position': self.movie1.imdbID, 'rating': 4})
-        # self.assertEqual(response.status_code, 200)
-
-        # rating = MovieShelfRating.objects.filter(position='tt1234567').first()
-        # print(rating)
-        # self.assertIsNotNone(rating)
-        # self.assertEqual(rating.rating, 4)
-        self.assertTrue(MovieShelfRating.objects.filter(
-            position='tt1234567').exists())
-
     def test_form_add_to_watched_valid_data(self):
-        form = WatchedForm(data=self.movie1.pk)
-        self.assertTrue(form.is_valid())
+        form = WatchedForm()
+        watched_list = form.save(commit=False)
+        watched_list.user = self.user_profile
+        watched_list.save()
+        watched_list.watched.set([self.movie1])
+        self.assertEqual(watched_list.user, self.user_profile)
+        self.assertIn(self.movie1, watched_list.watched.all())
 
     def test_form_add_to_watched_no_data(self):
         form = WatchedForm(data=None)
         self.assertFalse(form.is_valid())
 
     def test_watched_form_in_movie_details_view(self):
-        response = self.client.post('/scenario/result/tt0372784', {'watched': 'valid_movie_data'})
+        self.client.login(username='testuser1234', password='secret1234')
+        response = self.client.post('/scenario/result/tt1231212', {'watched': 'True'})
+        watched_by_user = WatchedByUser.objects.get(user=self.user_profile)
+        self.assertTrue(watched_by_user.watched.filter(imdbID='tt1231212').exists())
         self.assertEqual(response.status_code, 200)
 
+    def test_form_add_to_watched_in_movie_details_view_contain_csrf(self):
+        self.client.login(username='testuser1234', password='secret1234')
+        response = self.client.post('/scenario/result/tt1234576', {'watched': 'True'})
+        self.assertContains(response, 'csrfmiddlewaretoken')
+
     def test_form_add_to_to_watch_valid_data(self):
-        form = ToWatchForm(data=self.movie2.pk)
-        self.assertTrue(form.is_valid())
+        form = ToWatchForm()
+        to_watch_list = form.save(commit=False)
+        to_watch_list.user = self.user_profile
+        to_watch_list.save()
+        to_watch_list.to_watch.set([self.movie1])
+        self.assertEqual(to_watch_list.user, self.user_profile)
+        self.assertIn(self.movie1, to_watch_list.to_watch.all())
 
     def test_form_add_to_to_watch_no_data(self):
         form = ToWatchForm(data=None)
         self.assertFalse(form.is_valid())
 
     def test_to_watch_form_in_movie_details_view(self):
-        response = self.client.post('/scenario/result/tt0372784', {'to_watch': 'valid_movie_data'})
+        self.client.login(username='testuser12345', password='secret12345')
+        response = self.client.post('/scenario/result/tt1234576', {'to_watch': 'True'})
+        to_watch_by_user = ToWatchByUser.objects.get(user=self.user_profile2)
+        self.assertTrue(to_watch_by_user.to_watch.filter(imdbID='tt1234576').exists())
         self.assertEqual(response.status_code, 200)
 
-    def test_forms_in_movie_details_view_contain_csrf(self):
-        response = self.client.get('/scenario/result/tt0372784')
+    def test_form_add_to_to_watch_in_movie_details_view_contain_csrf(self):
+        self.client.login(username='testuser12345', password='secret12345')
+        response = self.client.post('/scenario/result/tt1231212', {'to_watch': 'True'})
         self.assertContains(response, 'csrfmiddlewaretoken')
+
+    # def test_movieshelf_rating_form_valid_data_view(self):
+    #     self.client.login(username='testuser1234', password='secret1234')
+    #     response = self.client.post('/scenario/result/tt1231212', {'website_ratings': 'True', 'rating': 5})
+    #     rated_by_user = MovieShelfRating.objects.get(user=self.user_profile)
+    #     self.assertTrue(rated_by_user.position.filter(position=self.movie1).exists())
+    #     self.assertEqual(response.status_code, 200)
+
+    def test_form_movieshelf_rating_movie_details_view_contain_csrf(self):
+        self.client.login(username='testuser12345', password='secret12345')
+        response = self.client.post('/scenario/result/tt1231212', {'website_ratings': 'True', 'rating': 5})
+        self.assertContains(response, 'csrfmiddlewaretoken')
+
+    def test_movieshelf_rating_form_valid_data(self):
+        form = MovieShelfRatingsForm()
+        w_rating = form.save(commit=False)
+        w_rating.user = self.user_profile
+        w_rating.position = self.movie1
+        w_rating.rating = 4
+        w_rating.save()
+        self.assertEqual(w_rating.user, self.user_profile)
+        self.assertEqual(self.movie1, w_rating.position)
+
+    def test_movieshelf_rating_form_invalid_data(self):
+        form = MovieShelfRatingsForm(data=None)
+        self.assertFalse(form.is_valid())
 
 
 class ActorDetailsViewTests(TestCase):
@@ -538,22 +589,23 @@ class PositionsToWatchByUserViewTests(TestCase):
         self.assertTemplateUsed(response, 'to_watch_by_user.html')
 
     def test_position_to_watch_by_user_view_display_correct_positions(self):
-        # self.client.login(username='testuser2', password='secret2')
+        self.client.login(username='testuser5', password='secret6')
         response = self.client.get(f'/scenario/users/{self.user.id}/to_watch')
         content = response.content.decode().replace(' ', '').replace('\n', '')
         self.assertRegex(content, f"{self.movie3.Title}.*{self.movie4.Title}")
 
     def test_position_to_watch_by_user_view_contains_correct_positions_number(self):
-        # self.client.login(username='testuser2', password='secret2')
+        self.client.login(username='testuser5', password='secret6')
         response = self.client.get(f'/scenario/users/{self.user.id}/to_watch')
         self.assertEqual(response.context['to_watch_all'].count(), 2)
 
     def test_position_to_watch_by_user_view_no_watched_positions(self):
-        # self.client.login(username='testuser3', password='secret3')
+        self.client.login(username='testuser6', password='secret6')
         response = self.client.get(f'/scenario/users/{self.user2.id}/to_watch')
         self.assertContains(response, 'No position to watch yet')
 
     def test_position_to_watch_by_user_view_no_watched_positions_contains_correct_positions_number(self):
+        self.client.login(username='testuser6', password='secret6')
         response = self.client.get(f'/scenario/users/{self.user2.id}/to_watch')
         self.assertEqual(response.context['to_watch_all'].count(), 0)
 
