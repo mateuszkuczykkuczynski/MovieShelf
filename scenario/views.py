@@ -1,17 +1,17 @@
-# from django.contrib.auth import get_user_model
-# from django.contrib.auth.mixins import LoginRequiredMixin
-# from django.utils.text import slugify
-
 import requests
-from django.shortcuts import render, get_object_or_404
 from environs import Env
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, get_object_or_404
 from django.utils.text import slugify
-from .models import Movie, Actor, Genre, Rating, Director, Writer, WatchedByUser, ToWatchByUser, MovieShelfRating
 from django.views.generic import ListView
-from .forms import WatchedForm, ToWatchForm, MovieShelfRatingsForm
-from members.models import UserProfile
-from django.db.models import Avg
 from django.db import IntegrityError
+from django.http import HttpResponseBadRequest
+from django.db.models import Avg
+
+from .forms import WatchedForm, ToWatchForm, MovieShelfRatingsForm
+from .models import Movie, Actor, Genre, Rating, Director, Writer, WatchedByUser, ToWatchByUser, MovieShelfRating
+from members.models import UserProfile
 
 
 env = Env()
@@ -20,6 +20,7 @@ env.read_env()
 OMDB_API_KEY = env.str("OMDB_API_KEY")
 
 
+@login_required
 def homepage_view(request):
     query = request.GET.get('q')
     page_number = request.GET.get('page')
@@ -30,17 +31,27 @@ def homepage_view(request):
         pass
 
     if query:
-        url = f"https://www.omdbapi.com/?apikey={OMDB_API_KEY}&s={query}&page={page_number}"
+        # noinspection PyBroadException
+        try:
+            url = f"https://www.omdbapi.com/?apikey={OMDB_API_KEY}&s={query}&page={page_number}"
 
-        results_per_page = 10
-        response = requests.get(url)
-        results = response.json()
+            results_per_page = 10
+            response = requests.get(url)
+            results = response.json()
 
-        total_results = int(results['totalResults'])
-        total_pages = (total_results + results_per_page - 1) // results_per_page
+            total_results = int(results['totalResults'])
+            total_pages = (total_results + results_per_page - 1) // results_per_page
 
-        has_next = int(page_number) < total_pages
-        has_previous = int(page_number) > 1
+            has_next = int(page_number) < total_pages
+            has_previous = int(page_number) > 1
+
+        except KeyError:
+            error_message = "Bad key value or required key is missing from the request"
+            return HttpResponseBadRequest(error_message)
+
+        except Exception:
+            error_message = 'Something went wrong. Please contact the website administrator.'
+            return HttpResponseBadRequest(error_message)
 
         return render(request, 'search_results.html', {
             'results': results,
@@ -54,8 +65,8 @@ def homepage_view(request):
     return render(request, 'home.html')
 
 
+@login_required
 def movie_details_view(request, result_id):
-
     if Movie.objects.filter(imdbID=result_id).exists():
         api_data = Movie.objects.get(imdbID=result_id)
         our_db = True
@@ -77,7 +88,6 @@ def movie_details_view(request, result_id):
                     watched_by_user, created = WatchedByUser.objects.get_or_create(user=user_profile)
                     if created:
                         watched_by_user.save()
-
 
                     watched_by_user.watched.add(api_data)
                 to_watch_form = ToWatchForm(prefix='to_watch')
@@ -107,16 +117,12 @@ def movie_details_view(request, result_id):
 
                     try:
                         website_rating.save()
-                    except IntegrityError as e:
-                        # handle the error
-                        print(f"IntegrityError: {str(e)}")
+                    except IntegrityError:
                         error_message = 'You have already give a note to this shelf position, you can not do it again.'
+                        return HttpResponseBadRequest(error_message)
 
                     all_ratings = MovieShelfRating.objects.filter(position=api_data)
                     avg_rating = all_ratings.aggregate(Avg('rating'))['rating__avg']
-                    # api_data.average_rating = average_rating
-                    # print(average_rating)
-                    # api_data.save()
 
                 website_ratings_form = MovieShelfRatingsForm(prefix='website_ratings')
 
@@ -136,123 +142,115 @@ def movie_details_view(request, result_id):
         }
 
     else:
-        url = f"https://www.omdbapi.com/?apikey={OMDB_API_KEY}&i={result_id}"
-        response = requests.get(url)
-        api_data = response.json()
+        # noinspection PyBroadException
+        try:
+            url = f"https://www.omdbapi.com/?apikey={OMDB_API_KEY}&i={result_id}"
+            response = requests.get(url)
+            api_data = response.json()
 
-        actor_obj = []
-        director_obj = []
-        writer_obj = []
-        genre_obj = []
-        rating_obj = []
+            actor_obj = []
+            director_obj = []
+            writer_obj = []
+            genre_obj = []
+            rating_obj = []
 
-        actors_list = [x.strip() for x in api_data["Actors"].split(",")]
-        for actor in actors_list:
-            a, created = Actor.objects.get_or_create(name=actor)
-            actor_obj.append(a)
+            actors_list = [x.strip() for x in api_data["Actors"].split(",")]
+            for actor in actors_list:
+                a, created = Actor.objects.get_or_create(name=actor)
+                actor_obj.append(a)
 
-        director_list = [x.strip() for x in api_data["Director"].split(",")]
-        for director in director_list:
-            d, created = Director.objects.get_or_create(name=director)
-            director_obj.append(d)
+            director_list = [x.strip() for x in api_data["Director"].split(",")]
+            for director in director_list:
+                d, created = Director.objects.get_or_create(name=director)
+                director_obj.append(d)
 
-        writer_list = [x.strip() for x in api_data["Writer"].split(",")]
-        for writer in writer_list:
-            w, created = Writer.objects.get_or_create(name=writer)
-            writer_obj.append(w)
+            writer_list = [x.strip() for x in api_data["Writer"].split(",")]
+            for writer in writer_list:
+                w, created = Writer.objects.get_or_create(name=writer)
+                writer_obj.append(w)
 
-        genre_list = [x.strip() for x in api_data["Genre"].split(",")]
-        for genre in genre_list:
-            g, created = Genre.objects.get_or_create(genre_type=genre)
-            genre_obj.append(g)
+            genre_list = [x.strip() for x in api_data["Genre"].split(",")]
+            for genre in genre_list:
+                g, created = Genre.objects.get_or_create(genre_type=genre)
+                genre_obj.append(g)
 
-        for rating in api_data["Ratings"]:
-            r, created = Rating.objects.get_or_create(source=rating["Source"], value=rating["Value"])
-            rating_obj.append(r)
+            for rating in api_data["Ratings"]:
+                r, created = Rating.objects.get_or_create(source=rating["Source"], value=rating["Value"])
+                rating_obj.append(r)
 
-        if api_data["Type"] == "movie":
-            data, created = Movie.objects.get_or_create(
-                Title=api_data["Title"],
-                Year=api_data["Year"],
-                Rated=api_data["Rated"],
-                Released=api_data["Released"],
-                Runtime=api_data["Runtime"],
-                Plot=api_data["Plot"],
-                Language=api_data["Language"],
-                Country=api_data["Country"],
-                Awards=api_data["Awards"],
-                Poster_url=api_data["Poster"],
-                Metascore=api_data["Metascore"],
-                imdbRating=api_data["imdbRating"],
-                imdbVotes=api_data["imdbVotes"],
-                imdbID=api_data["imdbID"],
-                Type=api_data["Type"],
-                DVD=api_data["DVD"],
-                BoxOffice=api_data["BoxOffice"],
-                Production=api_data["Production"],
-                Website=api_data["Website"],
-            )
-            data.Actors.set(actor_obj)
-            data.Director.set(director_obj)
-            data.Writer.set(writer_obj)
-            data.Genre.set(genre_obj)
-            data.Rating.set(rating_obj)
+            if api_data["Type"] == "movie":
+                data, created = Movie.objects.get_or_create(
+                    Title=api_data["Title"],
+                    Year=api_data["Year"],
+                    Rated=api_data["Rated"],
+                    Released=api_data["Released"],
+                    Runtime=api_data["Runtime"],
+                    Plot=api_data["Plot"],
+                    Language=api_data["Language"],
+                    Country=api_data["Country"],
+                    Awards=api_data["Awards"],
+                    Poster_url=api_data["Poster"],
+                    Metascore=api_data["Metascore"],
+                    imdbRating=api_data["imdbRating"],
+                    imdbVotes=api_data["imdbVotes"],
+                    imdbID=api_data["imdbID"],
+                    Type=api_data["Type"],
+                    DVD=api_data["DVD"],
+                    BoxOffice=api_data["BoxOffice"],
+                    Production=api_data["Production"],
+                    Website=api_data["Website"],
+                )
+                data.Actors.set(actor_obj)
+                data.Director.set(director_obj)
+                data.Writer.set(writer_obj)
+                data.Genre.set(genre_obj)
+                data.Rating.set(rating_obj)
 
-        else:
-            data, created = Movie.objects.get_or_create(
-                Title=api_data["Title"],
-                Year=api_data["Year"],
-                Rated=api_data["Rated"],
-                Released=api_data["Released"],
-                Runtime=api_data["Runtime"],
-                Plot=api_data["Plot"],
-                Language=api_data["Language"],
-                Country=api_data["Country"],
-                Awards=api_data["Awards"],
-                Poster_url=api_data["Poster"],
-                Metascore=api_data["Metascore"],
-                imdbRating=api_data["imdbRating"],
-                imdbVotes=api_data["imdbVotes"],
-                imdbID=api_data["imdbID"],
-                Type=api_data["Type"],
-                totalSeasons=api_data["totalSeasons"],
-            )
-            data.Actors.set(actor_obj)
-            data.Director.set(director_obj)
-            data.Writer.set(writer_obj)
-            data.Genre.set(genre_obj)
-            data.Rating.set(rating_obj)
+            else:
+                data, created = Movie.objects.get_or_create(
+                    Title=api_data["Title"],
+                    Year=api_data["Year"],
+                    Rated=api_data["Rated"],
+                    Released=api_data["Released"],
+                    Runtime=api_data["Runtime"],
+                    Plot=api_data["Plot"],
+                    Language=api_data["Language"],
+                    Country=api_data["Country"],
+                    Awards=api_data["Awards"],
+                    Poster_url=api_data["Poster"],
+                    Metascore=api_data["Metascore"],
+                    imdbRating=api_data["imdbRating"],
+                    imdbVotes=api_data["imdbVotes"],
+                    imdbID=api_data["imdbID"],
+                    Type=api_data["Type"],
+                    totalSeasons=api_data["totalSeasons"],
+                )
+                data.Actors.set(actor_obj)
+                data.Director.set(director_obj)
+                data.Writer.set(writer_obj)
+                data.Genre.set(genre_obj)
+                data.Rating.set(rating_obj)
 
-        data.save()
-        our_db = False
+            data.save()
+            our_db = False
 
-        context = {
-            'result': api_data,
-            'our_db': our_db,
-        }
+            context = {
+                'result': api_data,
+                'our_db': our_db,
+            }
+
+        except KeyError:
+            error_message = "Bad key value or required key is missing from the request"
+            return HttpResponseBadRequest(error_message)
+
+        except Exception:
+            error_message = 'Something went wrong. Please contact the website administrator.'
+            return HttpResponseBadRequest(error_message)
 
     return render(request, 'movie_details.html', context)
 
-    #     form = WatchedForm(request.POST)
-    #
-    # if form.is_valid():
-    #     user = request.user
-    #     user_profile = UserProfile.objects.get(user=user)
-    #     watched_by_user, created = WatchedByUser.objects.get_or_create(user=user_profile)
-    #
-    # if created:
-    #     watched_by_user.save()
-    #
-    # watched_by_user.watched.add(api_data)
-    #
-    # else:
-    #     form = WatchedForm()
-    #
 
-    # except IntegrityError as e:
-    #     return render_to_response("movie_details.html", {"message": e.message})
-
-
+@login_required
 def actor_details_view(request, actor_slug):
     actor = get_object_or_404(Actor, slug=actor_slug)
     if actor.slug is None:
@@ -263,6 +261,7 @@ def actor_details_view(request, actor_slug):
                                                   'actor_movies': actor_movies})
 
 
+@login_required
 def director_details_view(request, director_slug):
     director = get_object_or_404(Director, slug=director_slug)
     director_movies = director.movie_director.values_list("Title", flat=True)
@@ -270,6 +269,7 @@ def director_details_view(request, director_slug):
                                                      'director_movies': director_movies})
 
 
+@login_required
 def writer_details_view(request, writer_slug):
     writer = get_object_or_404(Writer, slug=writer_slug)
     writer_movies = writer.movie_writer.values_list("Title", flat=True)
@@ -277,6 +277,7 @@ def writer_details_view(request, writer_slug):
                                                    'writer_movies': writer_movies})
 
 
+@login_required
 def genre_detail_view(request, genre_slug):
     genre = get_object_or_404(Genre, slug=genre_slug)
     genre_results = genre.movie_genre.values_list("Title", flat=True)
@@ -284,7 +285,7 @@ def genre_detail_view(request, genre_slug):
                                                   'genre_results': genre_results})
 
 
-class PositionsWatchedByUserView(ListView):
+class PositionsWatchedByUserView(LoginRequiredMixin, ListView):
     model = WatchedByUser
     template_name = "watched_by_user.html"
     context_object_name = "watched_all"
@@ -298,7 +299,7 @@ class PositionsWatchedByUserView(ListView):
         return watched_movies
 
 
-class PositionsToWatchByUserView(ListView):
+class PositionsToWatchByUserView(LoginRequiredMixin, ListView):
     model = ToWatchByUser
     template_name = "to_watch_by_user.html"
     context_object_name = "to_watch_all"
@@ -308,4 +309,3 @@ class PositionsToWatchByUserView(ListView):
         user_profile = UserProfile.objects.get(user=user_id)
         to_watch_movies = user_profile.to_watch_by_user.to_watch.all()
         return to_watch_movies
-
