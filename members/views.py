@@ -1,9 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView
-from .forms import CustomUserCreationForm
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, render
 
+from .forms import CustomUserCreationForm
 from .models import UserProfile
 
 
@@ -63,5 +63,3 @@ class ProfileListView(LoginRequiredMixin, ListView):
     model = UserProfile
     template_name = 'user_profiles_list.html'
     context_object_name = 'all_users_profiles'
-
-
