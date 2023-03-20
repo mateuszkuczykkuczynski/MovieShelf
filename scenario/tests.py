@@ -1,9 +1,9 @@
-import unittest
-from django.test import SimpleTestCase, TestCase, Client
+from django.test import TestCase, Client
 from django.urls import reverse
-from .models import Movie, Genre, Director, Writer, Actor, Rating, WatchedByUser, ToWatchByUser
-from members.models import UserProfile
 from django.contrib.auth import get_user_model
+
+from members.models import UserProfile
+from .models import Movie, Genre, Director, Writer, Actor, Rating, WatchedByUser, ToWatchByUser
 from .forms import WatchedForm, ToWatchForm, MovieShelfRatingsForm
 
 
@@ -85,6 +85,11 @@ class MovieDetailsViewTests(TestCase):
     result_id_not_exists = 'tt1234567890'
 
     def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username='testuser8008',
+            email='testuser8008@email.com',
+            password='secret8008'
+        )
         self.genre = Genre.objects.create(genre_type='Comedy')
         self.director = Director.objects.create(name='Pixel The Director')
         self.writer = Writer.objects.create(name='Pixel The Writer')
@@ -121,6 +126,7 @@ class MovieDetailsViewTests(TestCase):
         self.movie.Rating.set([self.rating])
 
     def test_movie_detail_view_result_correctly_stored_in_db(self):
+        self.client.login(username='testuser8008', password='secret8008')
         response = self.client.get(reverse('movie_details', args=[self.movie.imdbID]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.movie.Title)
@@ -144,14 +150,17 @@ class MovieDetailsViewTests(TestCase):
         self.assertContains(response, self.movie.totalSeasons)
 
     def test_movie_detail_view_status_code_valid_id(self):
+        self.client.login(username='testuser8008', password='secret8008')
         response = self.client.get(reverse('movie_details', args=[self.result_id_1]))
         self.assertEqual(response.status_code, 200)
 
     def test_movie_detail_view_uses_correct_template(self):
+        self.client.login(username='testuser8008', password='secret8008')
         response = self.client.get(reverse('movie_details', args=[self.result_id_2]))
         self.assertTemplateUsed(response, 'movie_details.html')
 
     def test_movie_detail_view_status_code_invalid_id(self):
+        self.client.login(username='testuser8008', password='secret8008')
         response = self.client.get(reverse('movie_details', args=[self.result_id_not_exists]))
         self.assertEqual(response.status_code, 400)
 
@@ -298,25 +307,35 @@ class MovieDetailsViewFormsTests(TestCase):
 class ActorDetailsViewTests(TestCase):
 
     def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username='testuser666',
+            email='test666@email.com',
+            password='secret666'
+        )
         self.actor = Actor.objects.create(name="Rzerard Pike")
 
     def test_actor_details_view_returns_200_for_existing_actor(self):
+        self.client.login(username='testuser666', password='secret666')
         response = self.client.get(f'/scenario/actor/{self.actor.slug}')
         self.assertEqual(response.status_code, 200)
 
     def test_actor_details_view_returns_200_for_existing_actor_by_url_name(self):
+        self.client.login(username='testuser666', password='secret666')
         response = self.client.get(reverse('actor_detail', args=[self.actor.slug]))
         self.assertEqual(response.status_code, 200)
 
     def test_actor_details_view_returns_404_for_non_existing_actor(self):
+        self.client.login(username='testuser666', password='secret666')
         response = self.client.get('/scenario/actor/SelenaGomez')
         self.assertEqual(response.status_code, 404)
 
     def test_actor_details_view_uses_correct_template(self):
+        self.client.login(username='testuser666', password='secret666')
         response = self.client.get(f'/scenario/actor/{self.actor.slug}')
         self.assertTemplateUsed(response, 'actor_details.html')
 
     def test_actor_details_view_displays_actor_details(self):
+        self.client.login(username='testuser666', password='secret666')
         response = self.client.get(f'/scenario/actor/{self.actor.slug}')
         self.assertContains(response, self.actor.name)
 
@@ -324,25 +343,35 @@ class ActorDetailsViewTests(TestCase):
 class DirectorDetailsViewTests(TestCase):
 
     def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username='testuser3000',
+            email='test666@email.com',
+            password='secret3000'
+        )
         self.director = Director.objects.create(name="Vince Gilligan ")
 
     def test_director_details_view_returns_200_for_existing_actor(self):
+        self.client.login(username='testuser3000', password='secret3000')
         response = self.client.get(f'/scenario/director/{self.director.slug}')
         self.assertEqual(response.status_code, 200)
 
     def test_director_details_view_returns_200_for_existing_actor_by_url_name(self):
+        self.client.login(username='testuser3000', password='secret3000')
         response = self.client.get(reverse('director_detail', args=[self.director.slug]))
         self.assertEqual(response.status_code, 200)
 
     def test_director_details_view_returns_404_for_non_existing_actor(self):
+        self.client.login(username='testuser3000', password='secret3000')
         response = self.client.get('/scenario/director/QuentinoTarantoto')
         self.assertEqual(response.status_code, 404)
 
     def test_director_details_view_uses_correct_template(self):
+        self.client.login(username='testuser3000', password='secret3000')
         response = self.client.get(f'/scenario/director/{self.director.slug}')
         self.assertTemplateUsed(response, 'director_details.html')
 
     def test_director_details_view_displays_director_details(self):
+        self.client.login(username='testuser3000', password='secret3000')
         response = self.client.get(f'/scenario/director/{self.director.slug}')
         self.assertContains(response, self.director.name)
 
@@ -350,25 +379,36 @@ class DirectorDetailsViewTests(TestCase):
 class WriterDetailsViewTests(TestCase):
 
     def setUp(self):
+        self.client = Client()
+        self.user = get_user_model().objects.create_user(
+            username='testuser420',
+            email='testuser420@email.com',
+            password='secret420'
+        )
         self.writer = Writer.objects.create(name='Yann Martel')
 
     def test_writer_details_view_returns_200_for_existing_actor(self):
+        self.client.login(username='testuser420', password='secret420')
         response = self.client.get(f'/scenario/writer/{self.writer.slug}')
         self.assertEqual(response.status_code, 200)
 
     def test_writer_details_view_returns_200_for_existing_actor_by_url_name(self):
+        self.client.login(username='testuser420', password='secret420')
         response = self.client.get(reverse('writer_detail', args=[self.writer.slug]))
         self.assertEqual(response.status_code, 200)
 
     def test_writer_details_view_returns_404_for_non_existing_writer(self):
+        self.client.login(username='testuser420', password='secret420')
         response = self.client.get('/scenario/writer/KrystynaNolan')
         self.assertEqual(response.status_code, 404)
 
     def test_writer_details_view_uses_correct_template(self):
+        self.client.login(username='testuser420', password='secret420')
         response = self.client.get(f'/scenario/writer/{self.writer.slug}')
         self.assertTemplateUsed(response, 'writer_details.html')
 
     def test_writer_details_view_displays_writer_details(self):
+        self.client.login(username='testuser420', password='secret420')
         response = self.client.get(f'/scenario/writer/{self.writer.slug}')
         self.assertContains(response, self.writer.name)
 
@@ -376,25 +416,36 @@ class WriterDetailsViewTests(TestCase):
 class GenreDetailsViewTests(TestCase):
 
     def setUp(self):
+        self.client = Client()
+        self.user = get_user_model().objects.create_user(
+            username='testuser41022',
+            email='testuser41022@email.com',
+            password='secret41022'
+        )
         self.genre = Genre.objects.create(genre_type='Thriller')
 
     def test_genre_details_view_returns_200_for_existing_genre(self):
+        self.client.login(username='testuser41022', password='secret41022')
         response = self.client.get(f'/scenario/genre/{self.genre.slug}')
         self.assertEqual(response.status_code, 200)
 
     def test_genre_details_view_returns_200_for_existing_genre_by_url_name(self):
+        self.client.login(username='testuser41022', password='secret41022')
         response = self.client.get(reverse('genre_type', args=[self.genre.slug]))
         self.assertEqual(response.status_code, 200)
 
     def test_genre_details_view_returns_404_for_non_existing_genre(self):
+        self.client.login(username='testuser41022', password='secret41022')
         response = self.client.get('/scenario/genre/YourJokes')
         self.assertEqual(response.status_code, 404)
 
     def test_genre_details_view_uses_correct_template(self):
+        self.client.login(username='testuser41022', password='secret41022')
         response = self.client.get(f'/scenario/genre/{self.genre.slug}')
         self.assertTemplateUsed(response, 'genre_details.html')
 
     def test_genre_details_view_displays_genre_details(self):
+        self.client.login(username='testuser41022', password='secret41022')
         response = self.client.get(f'/scenario/genre/{self.genre.slug}')
         self.assertContains(response, self.genre.genre_type)
 
@@ -470,40 +521,45 @@ class PositionsWatchedByUserViewTests(TestCase):
         self.watched_by_user2 = WatchedByUser.objects.create(user=self.user_profile2)
 
     def test_position_watched_by_user_view_returns_200(self):
+        self.client.login(username='testuser2', password='secret2')
         response = self.client.get(f'/scenario/users/{self.user.id}/watched')
         self.assertEqual(response.status_code, 200)
 
     def test_position_watched_by_user_view_returns_200_by_url_name(self):
+        self.client.login(username='testuser2', password='secret2')
         response = self.client.get(reverse('watched_by_user', args=[self.user.id]))
         self.assertEqual(response.status_code, 200)
 
     def test_position_watched_by_user_view_uses_correct_template(self):
+        self.client.login(username='testuser2', password='secret2')
         response = self.client.get(reverse('watched_by_user', args=[self.user.id]))
         self.assertTemplateUsed(response, 'watched_by_user.html')
 
     def test_position_watched_by_user_view_display_correct_positions(self):
-        # self.client.login(username='testuser2', password='secret2')
+        self.client.login(username='testuser2', password='secret2')
         response = self.client.get(f'/scenario/users/{self.user.id}/watched')
         content = response.content.decode().replace(' ', '').replace('\n', '')
         self.assertRegex(content, f"{self.movie1.Title}.*{self.movie2.Title}")
 
     def test_position_watched_by_user_view_contains_correct_positions_number(self):
-        # self.client.login(username='testuser2', password='secret2')
+        self.client.login(username='testuser2', password='secret2')
         response = self.client.get(f'/scenario/users/{self.user.id}/watched')
         self.assertEqual(response.context['watched_all'].count(), 2)
 
     def test_position_watched_by_user_view_no_watched_positions(self):
-        # self.client.login(username='testuser3', password='secret3')
+        self.client.login(username='testuser3', password='secret3')
         response = self.client.get(f'/scenario/users/{self.user2.id}/watched')
         self.assertContains(response, 'No position watched yet')
 
     def test_position_watched_by_user_view_no_watched_positions_contains_correct_positions_number(self):
+        self.client.login(username='testuser3', password='secret3')
         response = self.client.get(f'/scenario/users/{self.user2.id}/watched')
         self.assertEqual(response.context['watched_all'].count(), 0)
 
-    @unittest.expectedFailure
-    def test_position_watched_by_user_invalid_user_id_returns_404(self):
-        self.client.get('/scenario/users/169/watched')
+    def test_position_watched_by_user_invalid_user_id_returns_400(self):
+        self.client.login(username='testuser3', password='secret3')
+        response = self.client.get('/scenario/users/169/watched')
+        self.assertEqual(response.status_code, 400)
 
 
 class PositionsToWatchByUserViewTests(TestCase):
@@ -577,14 +633,17 @@ class PositionsToWatchByUserViewTests(TestCase):
         self.to_watch_by_user2 = ToWatchByUser.objects.create(user=self.user_profile2)
 
     def test_position_to_watch_by_user_view_returns_200(self):
+        self.client.login(username='testuser5', password='secret6')
         response = self.client.get(f'/scenario/users/{self.user.id}/to_watch')
         self.assertEqual(response.status_code, 200)
 
     def test_position_to_watch_by_user_view_returns_200_by_url_name(self):
+        self.client.login(username='testuser5', password='secret6')
         response = self.client.get(reverse('to_watch_by_user', args=[self.user.id]))
         self.assertEqual(response.status_code, 200)
 
     def test_position_to_watch_by_user_view_uses_correct_template(self):
+        self.client.login(username='testuser5', password='secret6')
         response = self.client.get(reverse('to_watch_by_user', args=[self.user.id]))
         self.assertTemplateUsed(response, 'to_watch_by_user.html')
 
@@ -609,6 +668,7 @@ class PositionsToWatchByUserViewTests(TestCase):
         response = self.client.get(f'/scenario/users/{self.user2.id}/to_watch')
         self.assertEqual(response.context['to_watch_all'].count(), 0)
 
-    @unittest.expectedFailure
-    def test_position_to_watch_by_user_invalid_user_id_returns_404(self):
-        self.client.get('/scenario/users/169/to_watch')
+    def test_position_to_watch_by_user_invalid_user_id_returns_400(self):
+        self.client.login(username='testuser6', password='secret6')
+        response = self.client.get('/scenario/users/169/to_watch')
+        self.assertEqual(response.status_code, 400)
