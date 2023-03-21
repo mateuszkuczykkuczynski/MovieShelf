@@ -450,6 +450,107 @@ class GenreDetailsViewTests(TestCase):
         self.assertContains(response, self.genre.genre_type)
 
 
+class RandomPositionViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+        self.user = get_user_model().objects.create_user(
+            username='testuser9',
+            email='test9@email.com',
+            password='secret9'
+        )
+
+        self.movie1 = Movie.objects.create(Title='TestMovie3',
+                                           Year='2025',
+                                           Rated='18',
+                                           Released='10 Feb 2023',
+                                           Runtime='169',
+                                           Plot='Life of best dog ever.',
+                                           Language='English',
+                                           Country='Poland',
+                                           Awards='Oscar',
+                                           Poster='posters/test_movie.jpg',
+                                           Poster_url='https://www.test.com/test_movie.jpg',
+                                           Metascore='75',
+                                           imdbRating='7.6',
+                                           imdbVotes='12,345',
+                                           imdbID='tt1234501',
+                                           Type='movie',
+                                           DVD='N/A',
+                                           BoxOffice='21372137 $',
+                                           Production='Pixel Studio 1',
+                                           Website='https://www.pixelslifeisgreat.com',
+                                           totalSeasons='',
+                                           )
+
+        self.movie2 = Movie.objects.create(Title='TestMovie2',
+                                           Year='2026',
+                                           Rated='18',
+                                           Released='10 Feb 2023',
+                                           Runtime='169',
+                                           Plot='Life of best dog ever.',
+                                           Language='English',
+                                           Country='Poland',
+                                           Awards='Oscar',
+                                           Poster='posters/test_movie.jpg',
+                                           Poster_url='https://www.test.com/test_movie.jpg',
+                                           Metascore='75',
+                                           imdbRating='7.6',
+                                           imdbVotes='12,345',
+                                           imdbID='tt1234512',
+                                           Type='movie',
+                                           DVD='N/A',
+                                           BoxOffice='21374102 $',
+                                           Production='Pixel Studio 2',
+                                           Website='https://www.pixelslifeisthebest.com',
+                                           totalSeasons='',
+                                           )
+
+        self.movie3 = Movie.objects.create(Title='TestMovie2',
+                                           Year='2025',
+                                           Rated='18',
+                                           Released='10 Feb 2023',
+                                           Runtime='169',
+                                           Plot='Life of best dog ever.',
+                                           Language='English',
+                                           Country='Poland',
+                                           Awards='Oscar',
+                                           Poster='posters/test_movie.jpg',
+                                           Poster_url='https://www.test.com/test_movie.jpg',
+                                           Metascore='75',
+                                           imdbRating='7.6',
+                                           imdbVotes='12,345',
+                                           imdbID='tt1234503',
+                                           Type='movie',
+                                           DVD='N/A',
+                                           BoxOffice='21372137 $',
+                                           Production='Pixel Studio 3',
+                                           Website='https://www.pixelslifeisgreat.com',
+                                           totalSeasons='',
+                                           )
+
+    def test_random_position_view_status_code(self):
+        self.client.login(username='testuser9', password='secret9')
+        response = self.client.get('/scenario/random_position')
+        self.assertEqual(response.status_code, 200)
+
+    def test_random_position_view_status_code_url_by_name(self):
+        self.client.login(username='testuser9', password='secret9')
+        response = self.client.get(reverse('random_position'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_random_position_view_status_code_uses_correct_template(self):
+        self.client.login(username='testuser9', password='secret9')
+        response = self.client.get(reverse('random_position'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'random_position.html')
+
+    def test_random_position_view_contains_random_position_from_db(self):
+        self.client.login(username='testuser9', password='secret9')
+        response = self.client.get(reverse('random_position'))
+        self.assertIn(response.context['position'], [self.movie1, self.movie2, self.movie3])
+
+
 class PositionsWatchedByUserViewTests(TestCase):
 
     def setUp(self):
