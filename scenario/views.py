@@ -8,11 +8,11 @@ from django.views.generic import ListView
 from django.db import IntegrityError
 from django.http import HttpResponseBadRequest
 from django.db.models import Avg
+from random import randint
 
 from .forms import WatchedForm, ToWatchForm, MovieShelfRatingsForm
 from .models import Movie, Actor, Genre, Rating, Director, Writer, WatchedByUser, ToWatchByUser, MovieShelfRating
 from members.models import UserProfile
-
 
 env = Env()
 env.read_env()
@@ -285,6 +285,15 @@ def genre_detail_view(request, genre_slug):
                                                   'genre_results': genre_results})
 
 
+@login_required
+def random_position_view(request):
+    count = Movie.objects.count()
+    random_index = randint(0, count - 1)
+    position = Movie.objects.all()[random_index]
+    context = {'position': position}
+    return render(request, 'random_position.html', context)
+
+
 class PositionsWatchedByUserView(LoginRequiredMixin, ListView):
     model = WatchedByUser
     template_name = "watched_by_user.html"
@@ -298,6 +307,14 @@ class PositionsWatchedByUserView(LoginRequiredMixin, ListView):
         watched_movies = user_profile.watched_by_user.watched.all()
         return watched_movies
 
+    def get(self, request, *args, **kwargs):
+        # noinspection PyBroadException
+        try:
+            return super(PositionsWatchedByUserView, self).get(request, *args, **kwargs)
+        except Exception:
+            error_message = 'Bad key value or required key is missing from the request'
+            return HttpResponseBadRequest(error_message)
+
 
 class PositionsToWatchByUserView(LoginRequiredMixin, ListView):
     model = ToWatchByUser
@@ -309,3 +326,11 @@ class PositionsToWatchByUserView(LoginRequiredMixin, ListView):
         user_profile = UserProfile.objects.get(user=user_id)
         to_watch_movies = user_profile.to_watch_by_user.to_watch.all()
         return to_watch_movies
+
+    def get(self, request, *args, **kwargs):
+        # noinspection PyBroadException
+        try:
+            return super(PositionsToWatchByUserView, self).get(request, *args, **kwargs)
+        except Exception:
+            error_message = 'Bad key value or required key is missing from the request'
+            return HttpResponseBadRequest(error_message)
