@@ -19,8 +19,20 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             {% if user.is_authenticated %}
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">My Shelf</a>
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link active" aria-current="page" href="#">My Shelf</a>#}
+{#                    </li>#}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">Shelf </a>
+                        <ul class="dropdown-menu">
+                        {% if user.profiles.user_id %}
+                                <li><a class="dropdown-item" href="{% url 'watched_by_user' user_id=user.pk %}">My Shelf</a></li>
+                                <li><a class="dropdown-item" href="{% url 'to_watch_by_user' user_id=user.pk %}">Wait List</a></li>
+                        </ul>
+                        {% else %}
+                                <li><a class="dropdown-item" href="{% url 'create_user_profile' %}">Create Profile First</a></li>
+                        {% endif %}
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
@@ -50,7 +62,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'users_profiles_list' %}">Club members</a></li>
-                            <li><a class="dropdown-item" href="#">DVD Disc Reader</a></li>
+                            <li><a class="dropdown-item" href="{% url 'random_position' %}">DVD Disc Reader</a></li>
                         </ul>
                     </li>
                 </ul>
