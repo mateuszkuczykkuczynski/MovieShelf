@@ -14,3 +14,5 @@ RUN pip install -r requirements.txt
 
 # Copy project
 COPY . /MovieShelf/
+
+RUN rm -r tests
