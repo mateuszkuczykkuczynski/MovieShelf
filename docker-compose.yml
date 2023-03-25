@@ -1,0 +1,49 @@
+version: '3.10'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python /MovieShelf/manage.py runserver 0.0.0.0:8000
+    volumes:
+    - .:/MovieShelf
+    ports:
+    - "8000:8000"
+    environment:
+      - DB_HOST=${HOST}
+      - DB_NAME=${NAME}
+      - DB_USER=${USER}
+      - DB_PASSWORD=${PASSWORD}
+    depends_on:
+    - db
+    networks:
+      - djangonetwork
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile_tests
+#    command:
+#      bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python manage.py test'
+    ports:
+      - "8008:80"
+    depends_on:
+      - db
+    networks:
+      - djangonetwork
+  db:
+    image: postgres:latest
+    restart: always
+    ports:
+      - ${PORT}:${PORT}
+    environment:
+      - POSTGRES_USER=${USER}
+      - POSTGRES_PASSWORD=${PASSWORD}
+      - POSTGRES_DB=${NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - djangonetwork
+volumes:
+  postgres_data:
+networks:
+  djangonetwork:
