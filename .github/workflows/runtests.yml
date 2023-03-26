@@ -14,10 +14,10 @@ jobs:
         with:
           context: .
           push: false
-          tags: Dockerfile_tests:latest
+          tags: dockerfile_tests:latest
 
       - name: Start container
-        run: docker run --name test-container Dockerfile_tests:latest
+        run: docker run --name test-container dockerfile_tests:latest
 
       - name: Run tests
         run: docker exec test-container python -m manage.py test
