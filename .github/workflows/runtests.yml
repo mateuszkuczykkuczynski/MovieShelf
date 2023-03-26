@@ -1,27 +1,35 @@
-name: Run tests
-on: push
+name: Test Docker container
+
+on:
+  push:
+    branches: [main]
+
 jobs:
-  execute_tests:
-    name: Install requirements and execute tests
+  test-container:
     runs-on: ubuntu-latest
     steps:
-      - name: Update
-        run: sudo apt update
-      - name: Check out repository code
-        uses: actions/checkout@v3
-      - name: Install pip
-        run: sudo apt install python3-pip
-      - name: Install requirements
-        run: pip install -r requirements.txt
-      - name: Execute tests
-        env:
-          DJANGO_SETTINGS_MODULE: movieshelf.settings
-        run: python manage.py test
-      - name: Check test status
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker container
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: false
+          tags: Dockerfile_tests:latest
+
+      - name: Start container
+        run: docker run --name test-container Dockerfile_tests:latest
+
+      - name: Run tests
+        run: docker exec test-container python -m manage.py test
+
+      - name: Check test results
         run: |
-          if [ $? -ne 0 ]; then
-            echo "Tests failed"
-            exit 1
+          test_exit_code=$(docker inspect --format='{{.State.ExitCode}}' test-container)
+          if [ $test_exit_code -eq 0 ]; then
+            echo "Tests passed successfully!"
           else
-            echo "Tests passed"
+            echo "Tests failed with exit code $test_exit_code"
+            exit 1
           fi
