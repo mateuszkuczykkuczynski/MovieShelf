@@ -5,6 +5,12 @@ on: push
 jobs:
   test-container:
     runs-on: ubuntu-latest
+    env:
+      HOST : ${{ secrets.HOST }}
+      NAME : ${{ secrets.NAME }}
+      USER : ${{ secrets.USER }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+      PORT: ${{ secrets.PORT }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
