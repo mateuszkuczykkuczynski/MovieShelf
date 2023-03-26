@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Copy selected file to temporary directory
-        run: cp ./members/views.py /tmp/selected_file
+        run: cp ./members/models.py /tmp/selected_file
 
       - name: Install Python
         uses: actions/setup-python@v2
