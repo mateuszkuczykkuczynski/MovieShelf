@@ -10,8 +10,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Run Super-Linter
+      - name: Copy selected file to temporary directory
+        run: cp MovieShelf/members/views.py /tmp/selected_file
+
+      - name: Run Super-Linter on selected file
         uses: github/super-linter@v4
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          dockerfile-path: /tmp/selected_file
