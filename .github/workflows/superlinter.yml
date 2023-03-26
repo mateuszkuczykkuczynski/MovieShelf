@@ -15,9 +15,12 @@ jobs:
 
       - name: Run Super-Linter on selected file
         uses: github/super-linter@v4
-        with:
-          linters: pylint
-          pylint: /tmp/selected_file
         env:
-          DEFAULT_BRANCH: main
+          DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_WORKSPACE: /tmp/super-linter
+          RUN_LOCAL: true
+        with:
+          entrypoint: /usr/local/bin/super-linter
+          args: --file /tmp/selected_file --no-colors --json --output /tmp/lint-results.json --reporter github-pr-review
