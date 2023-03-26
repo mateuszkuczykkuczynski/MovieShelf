@@ -22,5 +22,5 @@ jobs:
           DEFAULT_WORKSPACE: /tmp/super-linter
           RUN_LOCAL: true
         with:
-          entrypoint: /usr/bin/super-linter
+          entrypoint: sh -c '/usr/bin/super-linter'
           args: --file /tmp/selected_file --no-colors --json --output /tmp/lint-results.json --reporter github-pr-review
