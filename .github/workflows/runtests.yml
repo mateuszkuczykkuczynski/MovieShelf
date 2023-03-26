@@ -17,7 +17,7 @@ jobs:
           tags: dockerfile_tests:latest
 
       - name: Start container
-        run: docker run --name test-container dockerfile_tests:latest
+        run: docker run -d --name test-container dockerfile_tests:latest
 
       - name: Run tests
         run: docker exec test-container python -m manage.py test
