@@ -23,5 +23,7 @@ jobs:
         run: docker-compose up -d db && sleep 10
 
       - name: Run tests
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: |
           python manage.py test
