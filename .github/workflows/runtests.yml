@@ -13,10 +13,12 @@ jobs:
         run: docker-compose up -d --build
         
       - name: Wait for container to start
-        run: sleep 240
+        run: sleep 120
 
       - name: Run tests
-        run: docker-compose exec web python -m manage test
+        run: | 
+          cd MovieShelf
+          docker-compose exec web python -m manage test
 
       - name: Check test results
         run: |
