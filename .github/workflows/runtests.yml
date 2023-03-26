@@ -1,4 +1,4 @@
-name: Pylint
+name: Django_tests
 
 on: push
 
@@ -9,28 +9,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build Docker container
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: false
-          tags: dockerfile_tests:latest
-
-      - name: Start container
-        run: docker run -d --name test-container dockerfile_tests:latest
-      
+      - name: Start containers
+        run: docker-compose up -d --build
+        
       - name: Wait for container to start
-        run: sleep 120
-  
+        run: sleep 240
+
       - name: Run tests
-        run: docker exec test-container python -m manage.py test
+        run: docker-compose exec web python -m manage.py test
 
       - name: Check test results
         run: |
-          test_exit_code=$(docker inspect --format='{{.State.ExitCode}}' test-container)
+          test_exit_code=$(docker inspect --format='{{.State.ExitCode}}' dockerfile_tests_web_1)
           if [ $test_exit_code -eq 0 ]; then
             echo "Tests passed successfully!"
           else
             echo "Tests failed with exit code $test_exit_code"
             exit 1
-          fi
