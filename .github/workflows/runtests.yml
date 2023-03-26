@@ -16,7 +16,7 @@ jobs:
         run: sleep 240
 
       - name: Run tests
-        run: docker-compose exec web python -m manage.py test
+        run: docker-compose exec web python -m manage test
 
       - name: Check test results
         run: |
