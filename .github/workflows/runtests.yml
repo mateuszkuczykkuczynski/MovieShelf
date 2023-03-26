@@ -18,7 +18,10 @@ jobs:
 
       - name: Start container
         run: docker run -d --name test-container dockerfile_tests:latest
-
+      
+      - name: Wait for container to start
+        run: sleep 120
+  
       - name: Run tests
         run: docker exec test-container python -m manage.py test
 
