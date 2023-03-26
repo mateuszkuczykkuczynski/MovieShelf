@@ -1,10 +1,10 @@
-name: Super-Linter
+name: Pylint
 
 on: push
 
 jobs:
-  super-lint:
-    name: Lint code base
+  lint:
+    name: Run pylint on selected file
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -13,14 +13,13 @@ jobs:
       - name: Copy selected file to temporary directory
         run: cp ./members/views.py /tmp/selected_file
 
-      - name: Run Super-Linter on selected file
-        uses: github/super-linter@v4
-        env:
-          DEFAULT_BRANCH: master
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ALL_CODEBASE: false
-          DEFAULT_WORKSPACE: /tmp/super-linter
-          RUN_LOCAL: true
+      - name: Install Python
+        uses: actions/setup-python@v2
         with:
-          entrypoint: sh -c '/usr/bin/super-linter'
-          args: --file /tmp/selected_file --no-colors --json --output /tmp/lint-results.json --reporter github-pr-review
+          python-version: 3.10
+
+      - name: Install Pylint
+        run: pip install pylint
+
+      - name: Run pylint
+        run: pylint --exit-zero /tmp/selected_file
