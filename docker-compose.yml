@@ -35,7 +35,7 @@ services:
     image: postgres:latest
     restart: always
     ports:
-      - ${PORT}:${PORT}
+      - "5432:5432"
     environment:
       - POSTGRES_USER=${USER}
       - POSTGRES_PASSWORD=${PASSWORD}
