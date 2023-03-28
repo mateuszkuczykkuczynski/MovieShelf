@@ -2,29 +2,73 @@
 
 {% block title %}Log In{% endblock title %}
 {% block my_header %} {% endblock my_header %}
-
-{% block content %}
-    <body>
-        <div style="width:800px; margin:0 auto;" class="tab-content">
-            <div class="form-group">
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="username" placeholder="Username">
-                    </div>
-                    <div class="form-group">
-                        <input type="password" class="form-control" name="password" placeholder="Password">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
-                </form>
-            </div>
-            <div class="col-md-6 d-flex justify-content-center">
-                <a href="{% url 'password_reset' %}">Forgot password?</a>
-            </div>
-        </div>
-        <!-- Register buttons -->
-        <div class="text-center">
-            <p>Not a member? <a href="{% url 'sign_up' %}">Register</a></p>
-        </div>
-    </body>
+{% block navbar %}
 {% endblock %}
+{% block content %}
+    <div style="width:800px; margin:0 auto;">
+    <div class="container">
+        <div class="text-center">
+            <h1 class="my-5 text-darkgreen text-success font-weight-bold">MovieShelf</h1>
+        </div>
+    </div>
+    <div class="tab-content">
+        <div class="form-group">
+            <form method="post">
+                {% csrf_token %}
+                <br>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="username" placeholder="Username">
+                </div>
+                <br>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="password" placeholder="Password">
+                </div>
+                <br>
+                <p>
+                <div class="d-flex justify-content-center">
+                    <button style="width:250px;" type="submit" class="btn btn-primary btn-block mb-4">Sign in
+                    </button>
+                </div>
+
+                </p>
+            </form>
+        </div>
+        <div>
+            <p class="links">
+                <span>Not a member?</span>
+                <a href="{% url 'sign_up' %}" class="register-link">Register</a>
+                <a href="{% url 'password_reset' %}" style="color: darkgreen;">Forgot password?</a>
+            </p>
+        </div>
+    </div>
+    <style>
+        .btn-primary {
+            background-color: seagreen;
+            border-color: seagreen;
+        }
+
+        .btn-primary:hover {
+            background-color: darkgreen;
+            border-color: darkgreen;
+        }
+
+        .form-control:focus {
+            border-color: darkgreen !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.25) !important;
+
+        }
+
+        .links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .register-link {
+            margin-right: 500px;
+            color: darkgreen;
+        }
+    </style>
+{% endblock %}
+
+
