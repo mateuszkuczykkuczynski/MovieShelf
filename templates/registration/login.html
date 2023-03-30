@@ -6,41 +6,48 @@
 {% endblock %}
 {% block content %}
     <div style="width:800px; margin:0 auto;">
-    <div class="container">
-        <div class="text-center">
-            <h1 class="my-5 text-darkgreen text-success font-weight-bold">MovieShelf</h1>
+        <div class="container">
+            <div class="text-center">
+                <h1 class="my-5 text-darkgreen text-success font-weight-bold">MovieShelf</h1>
+            </div>
         </div>
-    </div>
-    <div class="tab-content">
-        <div class="form-group">
-            <form method="post">
-                {% csrf_token %}
-                <br>
-                <div class="form-group">
-                    <input type="text" class="form-control" name="username" placeholder="Username">
-                </div>
-                <br>
-                <div class="form-group">
-                    <input type="password" class="form-control" name="password" placeholder="Password">
-                </div>
-                <br>
-                <p>
-                <div class="d-flex justify-content-center">
-                    <button style="width:250px;" type="submit" class="btn btn-primary btn-block mb-4">Sign in
-                    </button>
-                </div>
+        <div class="tab-content">
+            <div class="form-group">
+                <form method="post">
+                    {% csrf_token %}
+                    <br>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="username" placeholder="Username">
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" placeholder="Password">
+                    </div>
+                    <br>
+                    <p>
+                    <div class="d-flex justify-content-center">
+                        <button style="width:250px;" type="submit" class="btn btn-primary btn-block mb-4">Sign in
+                        </button>
+                    </div>
+                </form>
+                {#                </p>#}
+                {#            </form>#}
 
-                </p>
-            </form>
-        </div>
-        <div>
-            <p class="links">
-                <span>Not a member?</span>
-                <a href="{% url 'sign_up' %}" class="register-link">Register</a>
-                <a href="{% url 'password_reset' %}" style="color: darkgreen;">Forgot password?</a>
-            </p>
+                <div>
+                    <p class="links">
+                        <span>Not a member?</span>
+                        <a href="{% url 'sign_up' %}" class="register-link">Register</a>
+                        <a href="{% url 'password_reset' %}" style="color: darkgreen;">Forgot password?</a>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
+    {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            Invalid username or password. Please try again.
+        </div>
+    {% endif %}
     <style>
         .btn-primary {
             background-color: seagreen;

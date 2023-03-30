@@ -25,15 +25,18 @@
 {#                        <a class="nav-link active" aria-current="page" href="#">My Shelf</a>#}
 {#                    </li>#}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false">Shelf </a>
-                        <ul class="dropdown-menu">
+{#                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"#}
+{#                           aria-expanded="false">Shelf </a>#}
+{#                        <ul class="dropdown-menu">#}
                         {% if user.profiles.user_id %}
+                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">Shelf </a>
+                            <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'watched_by_user' user_id=user.pk %}">My Shelf</a></li>
                                 <li><a class="dropdown-item" href="{% url 'to_watch_by_user' user_id=user.pk %}">Wait List</a></li>
                         </ul>
-                        {% else %}
-                                <li><a class="dropdown-item" href="{% url 'create_user_profile' %}">Create Profile First</a></li>
+{#                        {% else %}#}
+{#                                <li><a class="dropdown-item" href="{% url 'create_user_profile' %}">Create Profile First</a></li>#}
                         {% endif %}
                     </li>
                     <li class="nav-item dropdown">
@@ -47,7 +50,7 @@
                                 <li><a class="dropdown-item" href="{% url 'update_user_profile' pk=user.pk %}">Edit My Profile</a></li>
                                 <li><a class="dropdown-item" href="{% url 'delete_user_profile' pk=user.pk %}">Delete My Profile</a></li>
                             {% else %}
-                                <li><a class="dropdown-item" href="{% url 'create_user_profile' %}">Create Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'create_user_profile' %}">Create Profile First</a></li>
                             {% endif %}
                             <li>
                                 <hr class="dropdown-divider">
@@ -57,16 +60,18 @@
                             <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                            Couch
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'users_profiles_list' %}">Club members</a></li>
-                            <li><a class="dropdown-item" href="{% url 'random_position' %}">DVD Disc Reader</a></li>
-                        </ul>
-                    </li>
+                    {% if user.profiles.pk %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                Couch
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'users_profiles_list' %}">Club members</a></li>
+                                <li><a class="dropdown-item" href="{% url 'random_position' %}">DVD Disc Reader</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
                 </ul>
                 </div>
                 </div>
