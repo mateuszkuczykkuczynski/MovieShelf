@@ -1,15 +1,52 @@
 {% extends 'base.html' %}
+{% load crispy_forms_filters %}
 
 {% block title %}Sign Up{% endblock title %}
 {% block my_header %} {% endblock my_header %}
+{% block navbar %}
+{% endblock %}
+
 {% block content %}
-<h1>Are you new in Movie Shelf? You can sign up here...</h1>
-<br/><br/>
-<div class="form-group">
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-secondary">Sign Up</button>
-    </form>
-</div>
+    <div style="width:800px; margin:0 auto;">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="my-5 text-success font-weight-bold">
+                    <span style="color: black;">Welcome to</span>
+                    <span style="color: darkgreen;">MovieShelf</span>
+                    <span style="color: black;">! </span>
+                    <h2><span style="color: black;">Here you can create your account.</span></h2>
+                </h2>
+            </div>
+        </div>
+    </div>
+    <br/><br/>
+    <div class="form-group">
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <br>
+            <p>
+            <div class="d-flex justify-content-center">
+                <button style="width:250px;" type="submit" class="btn btn-primary btn-block mb-4">Sign Up
+                </button>
+            </div>
+        </form>
+    </div>
+    <style>
+        .btn-primary {
+            background-color: seagreen;
+            border-color: seagreen;
+        }
+
+        .btn-primary:hover {
+            background-color: darkgreen;
+            border-color: darkgreen;
+        }
+
+        .form-control:focus {
+            border-color: darkgreen !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.25) !important;
+
+        }
+    </style>
 {% endblock %}
