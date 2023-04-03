@@ -30,14 +30,11 @@
                         </button>
                     </div>
                 </form>
-                {#                </p>#}
-                {#            </form>#}
-
                 <div>
                     <p class="links">
-                        <span>Not a member?</span>
-                        <a href="{% url 'sign_up' %}" class="register-link">Register</a>
-                        <a href="{% url 'password_reset' %}" style="color: darkgreen;">Forgot password?</a>
+                        <span style="white-space: nowrap;">Not a member?</span>
+                        <a href="{% url 'sign_up' %}" class="register-link"> Register</a>
+                        <span style="white-space: nowrap;"> <a href="{% url 'password_reset' %}" style="color: darkgreen;">Forgot password?</a></span>
                     </p>
                 </div>
             </div>
@@ -74,8 +71,8 @@
         .register-link {
             margin-right: 500px;
             color: darkgreen;
+            display: inline-block;
+            margin-left: 10px;"
         }
     </style>
 {% endblock %}
-
-
