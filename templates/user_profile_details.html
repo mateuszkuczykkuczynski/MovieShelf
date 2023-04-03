@@ -3,12 +3,23 @@
 {% block title %}Your profile{% endblock title %}
 
 {% block content %}
+    <div class="d-flex flex-column align-items-center justify-content-center">
+        <br>
+        {% if user.pk == profile.user.pk %}
+            <h2>That's your profile!</h2>
+        {% else %}
+            <h2>Profile of {{ profile.user.username }}</h2>
+    {% endif %}
+        <br>
+        <div>
+            {{ profile.avatar }}
+            <br>
+            <strong style="font-size: 18px;">Socials:</strong> {{ profile.socials }}
+            <br>
+            <strong style="font-size: 18px;">Bio:</strong> {{ profile.bio }}
+        </div>
+    </div>
 
-        <h1>Your profile details</h1>
-        <body>
-                {{ profile.socials }}
-                {{ profile.bio }}
 
-        </body>
 
 {% endblock content %}

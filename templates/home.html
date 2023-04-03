@@ -2,15 +2,97 @@
 
 {% block title %}Home{% endblock title %}
 
-
-
 {% block content %}
-    <body>
-    <div class="d-flex align-items-center justify-content-center vh-100 flex-column gap-4">
-        <form class="d-flex">
-            <input class="form-control me-1" type="search" placeholder="Search" aria-label="Search" name="q" value="{{ request.GET.q }}">
-            <button class="btn btn-primary" type="submit" >Search</button>
-        </form>
+    <div class="container-fluid p-0">
+        <div class="full-screen-image">
+            <img src="https://geex.x-kom.pl/wp-content/uploads/2021/04/breaking-bad-plakat.jpg" alt="Breaking Bad">
+            <div class="search-box">
+                <form class="d-flex">
+                    <input class="form-control me-1" type="search" placeholder="Search" aria-label="Search" name="q"
+                           value="{{ request.GET.q }}">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
     </div>
-    </body>
+
+    <style>
+        .form-control {
+            text-align: center;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+            z-index: 999;
+        }
+
+        .full-screen-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .full-screen-image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: auto;
+            z-index: -1;
+        }
+
+
+        .search-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50%;
+            max-width: 500px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-box input {
+            width: 100%;
+            border: none;
+            background: none;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+
+        .search-box button {
+            background-color: seagreen;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .search-box button:hover {
+            background-color: darkgreen;
+        }
+
+        .search-box button:active {
+            background-color: black !important;
+        }
+
+        @media (max-width: 768px) {
+            .search-box {
+                width: 80%;
+                padding: 10px;
+            }
+        }
+
+    </style>
 {% endblock content %}

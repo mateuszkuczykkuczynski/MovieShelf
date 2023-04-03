@@ -3,12 +3,13 @@
 {% block title %}MovieShelf Users{% endblock title %}
 
 {% block content %}
-
-        <h1>Here you can find all MovieShelf Members</h1>
+    <div class="d-flex flex-column align-items-center justify-content-center">
+        <br>
+        <h2>MovieShelf Members</h2>
         <body>
             {% for profile in all_users_profiles %}
-                <a href="{% url 'user_profile' pk=profile.user.pk %}">{{ profile.user.username}}</a>
+                <h5><a href="{% url 'user_profile' pk=profile.user.pk %}" style="color: darkgreen;">{{ profile.user.username}}</a></h5>
             {% endfor %}
         </body>
-
+    </div>
 {% endblock content %}

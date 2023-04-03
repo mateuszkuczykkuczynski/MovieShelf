@@ -1,19 +1,64 @@
 {% extends 'base.html' %}
-{% block title %} Create Profile Page {% endblock %}
+{% load crispy_forms_filters %}
+
+{% block title %} Create Profile {% endblock %}
 {% block content %}
 
 {% if user.is_authenticated %}
-    <h1>Create your own profile page in MovieShelf</h1>
+    <br>
+    <h2>Create your own profile in MovieShelf</h2>
+    <br>
     <div class="form-group">
         <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-secondary">Done</button>
+        <div class="mb-3">
+            {{ form.avatar|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+            {{ form.socials|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+            {{ form.bio|as_crispy_field }}
+        </div>
+        <button style="width:165px;" type="submit" class="btn btn-primary btn-block mb-4">Done
+                </button>
         </form>
     </div>
 
 {% else %}
-You sholudn't be here (and you know it)!
+You shouldn't be here (and you know it)!
 
 {% endif %}
+
+    <style>
+        .btn-primary {
+            background-color: seagreen;
+            border-color: seagreen;
+        }
+
+        .btn-primary:hover {
+            background-color: darkgreen;
+            border-color: darkgreen;
+        }
+
+        .form-control:focus {
+            border-color: darkgreen !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.25) !important;
+
+        }
+        .form-group #id_avatar {
+            width: 520px;
+            height: 38px;
+        }
+
+        .form-group #id_bio {
+            width: 520px;
+            height: 200px;
+        }
+
+        .form-group #id_socials {
+            width: 520px;
+            height: 38px;
+        }
+    </style>
 {% endblock %}

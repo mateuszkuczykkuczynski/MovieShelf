@@ -9,11 +9,10 @@
 
 </head>
 <body>
-
     {% block navbar %}
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg bg-seagreen">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'home' %}">MovieShelf</a>
+        <a class="navbar-brand text-white" href="{% url 'home' %}">MovieShelf</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -21,26 +20,18 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             {% if user.is_authenticated %}
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-{#                    <li class="nav-item">#}
-{#                        <a class="nav-link active" aria-current="page" href="#">My Shelf</a>#}
-{#                    </li>#}
                     <li class="nav-item dropdown">
-{#                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"#}
-{#                           aria-expanded="false">Shelf </a>#}
-{#                        <ul class="dropdown-menu">#}
                         {% if user.profiles.user_id %}
-                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                            <a class="nav-link dropdown-toggle text-white" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false">Shelf </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'watched_by_user' user_id=user.pk %}">My Shelf</a></li>
                                 <li><a class="dropdown-item" href="{% url 'to_watch_by_user' user_id=user.pk %}">Wait List</a></li>
                         </ul>
-{#                        {% else %}#}
-{#                                <li><a class="dropdown-item" href="{% url 'create_user_profile' %}">Create Profile First</a></li>#}
                         {% endif %}
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle text-white" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false">
                             Profile
                         </a>
@@ -62,7 +53,7 @@
                     </li>
                     {% if user.profiles.pk %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                            <a class="nav-link dropdown-toggle text-white" role="button" data-bs-toggle="dropdown"
                                aria-expanded="false">
                                 Couch
                             </a>
@@ -98,3 +89,8 @@
         crossorigin="anonymous"></script>
 </body>
 </html>
+<style>
+    .bg-seagreen {
+    background-color: black;
+}
+</style>

@@ -1,251 +1,146 @@
 {% extends 'base.html' %}
-{% block content %}
-    <p><b>Title: {{ result.Title }}</b></p>
-    <p>Type: <b>{{ result.Type }}</b></p>
-    <p>Plot: <b>{{ result.Plot }}</b></p>
-    <p>Year: <b>{{ result.Year }}</b></p>
-    <p>Rated: <b>{{ result.Rated }}</b></p>
-    <p>Released: <b>{{ result.Released }}</b></p>
-    <p>Language: <b>{{ result.Language }}</b></p>
-    <p>Country: <b>{{ result.Country }}</b></p>
-    <p>Awards: <b>{{ result.Awards }}</b></p>
-    <p>imdRating: <b>{{ result.imdbRating }}</b></p>
-    <p>imdbVotes: <b>{{ result.imdbVotes }}</b></p>
-    <p>BoxOffice: <b>{{ result.BoxOffice }}</b></p>
-    <p>Production: <b>{{ result.Production }}</b></p>
-    <p>Website: <b>{{ result.Website }}</b></p>
-    <p>Runtime: <b>{{ result.Runtime }}</b></p>
-    <p>Metascore: <b>{{ result.Metascore }}</b></p>
-    <p>DVD: <b>{{ result.DVD }}</b></p>
-    <form method="POST">
-            {% csrf_token %}
+{% load crispy_forms_filters %}
+{% block title %}Movie Details{% endblock title %}
 
-            {{ watched_form.as_p }}
-            <button type="submit" name="watched">Watched</button>
-    </form>
+    {% block content %}
+        <div class = "col-md-6 text-left">
+        {% if our_db is True %}
+            <br><p><b><img src="{{ result.Poster.url }}" alt=""></b></p>
+        {% else %}
+            <p><b><img src="{{ result.Poster }}" alt=""></b></p>
+        {% endif %}
+        <div class="form-container">
+                <form method="POST">
+                    {% csrf_token %}
 
-    <form method="POST">
-            {% csrf_token %}
+                    {{ watched_form|crispy }}
+                    <button style="width:100px;" type="submit" class="btn btn-primary btn-block mb-4">Watched
+                </button>
+                </form>
+                <br><form method="POST">
+                    {% csrf_token %}
 
-            {{ to_watch_form.as_p }}
-            <button type="submit" name="to_watch">To Watch</button>
-    </form>
-
-    <form method="POST">
-            {% csrf_token %}
-
-            {{ website_ratings_form.as_p }}
-            <button type="submit" name="website_ratings">Rate</button>
-
-            {% if error_message %}
-                <p class="error">{{ error_message }}</p>
-            {% endif %}
-    </form>
-    {% if our_db is True %}
-        <p>Poster: <b><img src="{{ result.Poster.url }}" alt=""></b></p>
-        <p>Genre: <b>{% for genre in result.Genre.all %}</b>
-            <a href="{{ genre.get_absolute_url }}">{{ genre }} </a> {% endfor %}</p>
-        <p>Actors: <b>{% for actor in result.Actors.all %}</b>
-            <a href="{{ actor.get_absolute_url }}"> {{ actor }} </a>{% endfor %}</p>
-        <p>Director: <b>{% for director in result.Director.all %} </b>
-            <a href="{{ director.get_absolute_url }}"> {{ director }}</a> {% endfor %}</p>
-        <p>Writer: <b>{% for writer in result.Writer.all %}</b>
-            <a href="{{ writer.get_absolute_url }}">{{ writer }}</a> {% endfor %}</p>
-        <p>Rating: <b>{% for rating in result.Rating.all %}</b> {{ rating }} {{ rating.value }}{% endfor %} </p>
-        <p>MovieShelf Users Rating: <b>{{ avg_rating }}</b></p>
-   {% else %}
-        <p>Poster: <b><img src="{{ result.Poster }}" alt=""></b></p>
-        <p>Genre: <b> {{ result.Genre }} </b></p>
-        <p>Actors: <b>{{ result.Actors }}</b></p>
-        <p>Director: <b>{{ result.Director }}</b></p>
-        <p>Writer: <b>{{ result.Writer }}</b></p>
-        <p>Rating: <b>{{ result.Ratings.0.Source }} {{ result.Ratings.0.Value }}</b>
-        <p>Rating: <b>{{ result.Ratings.1.Source }} {{ result.Ratings.1.Value }}</b>
-        <p>Rating: <b>{{ result.Ratings.2.Source }} {{ result.Ratings.2.Value }}</b>
-    {% endif %}
-{% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{#{% extends 'homepage.html' %}#}
-{#{% load static %}#}
+                    {{ to_watch_form|crispy }}
+                    <button style="width:120px;" type="submit" class="btn btn-primary btn-block mb-4">To watch
+                </button>
+                </form>
+            </div>
+            {% if our_db is True %}
+{#                    <br><p><b><img src="{{ result.Poster.url }}" alt=""></b></p>#}
+                    <p><span style="color: darkgreen;"><b>Genre: </b></span><b>{% for genre in result.Genre.all %}</b>
+                        <a style="color: black" href="{{ genre.get_absolute_url }}">{{ genre }} </a> {% endfor %}</p>
+                    <p><span style="color: darkgreen;"><b>Actors: </b></span><b>{% for actor in result.Actors.all %}</b>
+                        <a style="color: black" href="{{ actor.get_absolute_url }}"> {{ actor }} </a>{% endfor %}</p>
+                    <p><span style="color: darkgreen;"><b>Director: </b></span><b>{% for director in result.Director.all %} </b>
+                        <a style="color: black" href="{{ director.get_absolute_url }}"> {{ director }}</a> {% endfor %}</p>
+                    <p><span style="color: darkgreen;"><b>Writer: </b></span><b>{% for writer in result.Writer.all %}</b>
+                        <a style="color: black" href="{{ writer.get_absolute_url }}">{{ writer }}</a> {% endfor %}</p>
+                    <p><span style="color: darkgreen;"><b>Rating: </b></span><b>{% for rating in result.Rating.all %}</b> {{ rating }} {{ rating.value }}{% endfor %}
+                    </p>
+                    <p><span style="color: darkgreen;"><b>MovieShelf Users Rating: </b></span>{{ avg_rating }}</p>
+                {% else %}
+{#                    <p><b><img src="{{ result.Poster }}" alt=""></b></p>#}
+                    <p>Genre: <b> {{ result.Genre }} </b></p>
+                    <p>Actors: <b>{{ result.Actors }}</b></p>
+                    <p>Director: <b>{{ result.Director }}</b></p>
+                    <p>Writer: <b>{{ result.Writer }}</b></p>
+                    <p>Rating: <b>{{ result.Ratings.0.Source }} {{ result.Ratings.0.Value }}</b>
+                    <p>Rating: <b>{{ result.Ratings.1.Source }} {{ result.Ratings.1.Value }}</b>
+                    <p>Rating: <b>{{ result.Ratings.2.Source }} {{ result.Ratings.2.Value }}</b>
+                {% endif %}
+{#            <div class="form-container">#}
+{#                <form method="POST">#}
+{#                    {% csrf_token %}#}
 {##}
+{#                    {{ watched_form|crispy }}#}
+{#                    <button style="width:100px;" type="submit" class="btn btn-primary btn-block mb-4">Watched#}
+{#                </button>#}
+{#                </form>#}
+{#                <br><form method="POST">#}
+{#                    {% csrf_token %}#}
 {##}
-{#{% block content %}#}
-{##}
-{#<!--   Icon Section   -->#}
-{#<div class="row">#}
-{##}
-{#    <div class="col s12 m12">#}
-{#        <div class="card horizontal">#}
-{#            <div class="card-image">#}
-{##}
-{#                {% if site_database is True %}#}
-{#                <img src="{{ movie_data.Poster.url }}">#}
-{#                {% else %}#}
-{#                <img src="{{ movie_data.Poster }}">#}
-{#                {% endif %}#}
-{##}
-{##}
+{#                    {{ to_watch_form|crispy }}#}
+{#                    <button style="width:120px;" type="submit" class="btn btn-primary btn-block mb-4">To watch#}
+{#                </button>#}
+{#                </form>#}
 {#            </div>#}
-{#            <div class="card-stacked">#}
-{#                <div class="card-content">#}
-{#                    <span class="card-title"><b>{{ movie_data.Title }}</b></span>#}
-{#                    <span>{{ movie_data.Type }}</span>#}
-{#                    <br>#}
-{#                    <p>{{ movie_data.Plot }}</p>#}
-{#                    <br>#}
-{#                    <div class="divider"></div>#}
-{#                    <span>Year: <b>{{ movie_data.Year }}</b></span>#}
-{#                    <span class="right">Rated: <b>{{ movie_data.Rated }}</b></span>#}
-{#                    <p>Released: <b>{{ movie_data.Released }}</b></p>#}
-{#                    <p>Runtime: <b>{{ movie_data.Runtime }}</b></p>#}
-{##}
-{#                    {% if site_database is True %}#}
-{#                    <p>Genre: {% for genre in movie_data.Genre.all %}<b><a href="{{ genre.get_absolute_url }}">{{ genre#}
-{#                        }}</a>, </b>{% endfor %}</p>#}
-{#                    {% else %}#}
-{#                    <p>Genre: <b>{{ movie_data.Genre }} </b></p>#}
-{#                    {% endif %}#}
-{##}
-{##}
-{#                    <p>Director: <b>{{ movie_data.Director }}</b></p>#}
-{#                    <p>Writer: <b>{{ movie_data.Writer }}</b></p>#}
-{##}
-{##}
-{#                    {% if site_database is True %}#}
-{#                    <p>Actors: {% for actor in movie_data.Actors.all %}<a href="{{ actor.get_absolute_url }}">#}
-{#                        <b>{{ actor }}</b></a>, </b>{% endfor %}</p>#}
-{#                    {% else %}#}
-{#                    <p>Actors: <b>{{ movie_data.Actors }}</b></p>#}
-{#                    {% endif %}#}
-{##}
-{##}
-{#                    <p>Language: <b>{{ movie_data.Language }}</b></p>#}
-{#                    <p>Country: <b>{{ movie_data.Country }}</b></p>#}
-{#                    <p>Awards: <b>{{ movie_data.Awards }}</b></p>#}
-{#                    <div class="divider"></div>#}
-{#                    <ul class="collection">#}
-{##}
-{#                        <li class="collection-item avatar">#}
-{#                            <span class="title">Rated</span>#}
-{#                            <p><b>{{ reviews_avg.rate__avg }}</b> by <b>{{ reviews_count }}</b> people </p>#}
-{#                        </li>#}
-{##}
-{##}
-{#                        {% if site_database is True %}#}
-{##}
-{#                        {% for movie in movie_data.Ratings.all %}#}
-{##}
-{#                        {% if movie.source == 'Internet Movie Database' %}#}
-{#                        <li class="collection-item avatar">#}
-{#                            <img src="{% static 'img/icons/imdb_icon.png' %}" alt="" class="circle">#}
-{#                            <span class="title">{{ movie.source }}</span>#}
-{#                            <p><b>{{ movie.rating }}</b></p>#}
-{#                        </li>#}
-{#                        {% elif movie.source == 'Rotten Tomatoes' %}#}
-{#                        <li class="collection-item avatar">#}
-{#                            <img src="{% static 'img/icons/rt_icon.png' %}" alt="" class="circle">#}
-{#                            <span class="title">{{ movie.source }}</span>#}
-{#                            <p><b>{{ movie.rating }}</b></p>#}
-{#                        </li>#}
-{#                        {% else %}#}
-{#                        <li class="collection-item avatar">#}
-{#                            <img src="{% static 'img/icons/meta_icon.png' %}" alt="" class="circle">#}
-{#                            <span class="title">{{ movie.source }}</span>#}
-{#                            <p><b>{{ movie.rating }}</b></p>#}
-{#                        </li>#}
-{#                        {% endif %}#}
-{##}
-{#                        {% endfor %}#}
-{##}
-{#                        {% else %}#}
-{##}
-{#                        <li class="collection-item avatar">#}
-{#                            <img src="{% static 'img/icons/imdb_icon.png' %}" alt="" class="circle">#}
-{#                            <span class="title">{{ movie_data.Ratings.0.Source }}</span>#}
-{#                            <p><b>{{ movie_data.Ratings.0.Value }}</b></p>#}
-{#                        </li>#}
-{##}
-{#                        <li class="collection-item avatar">#}
-{#                            <img src="{% static 'img/icons/rt_icon.png' %}" alt="" class="circle">#}
-{#                            <span class="title">{{ movie_data.Ratings.1.Source }}</span>#}
-{#                            <p><b>{{ movie_data.Ratings.0.Value }}</b></p>#}
-{#                        </li>#}
-{##}
-{#                        <li class="collection-item avatar">#}
-{#                            <img src="{% static 'img/icons/meta_icon.png' %}" alt="" class="circle">#}
-{#                            <span class="title">{{ movie_data.Ratings.2.Source }}</span>#}
-{#                            <p><b>{{ movie_data.Ratings.0.Value }}</b></p>#}
-{#                        </li>#}
-{##}
-{#                        {% endif %}#}
-{##}
-{#                    </ul>#}
-{##}
-{#                    <div class="divider"></div>#}
-{#                    <p>Box Office: <b>{{ movie_data.BoxOffice }}</b></p>#}
-{#                    <p>imdb Votes: <b>{{ movie_data.imdbVotes }}</b></p>#}
-{#                    <p>imdb ID: <b>{{ movie_data.imdbID }}</b></p>#}
-{#                    <p>Production: <b>{{ movie_data.Production }}</b></p>#}
-{##}
-{#                    <br>#}
-{##}
-{##}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{##}
-{#</div>#}
-{##}
-{#<h4>Reviews</h4>#}
-{#<div class="divider"></div>#}
-{##}
-{##}
-{#<div class="row">#}
-{#    <div class="col s12 m12">#}
-{#        <div class="card">#}
-{#            <div class="card-content">#}
-{#                <ul class="collection">#}
-{##}
-{#                    {% for review in reviews %}#}
-{#                    <li class="collection-item avatar">#}
-{##}
-{#                        {% if review.user.profile.picture %}#}
-{#                        <img src="{{ review.user.profile.picture.url }}" alt="" class="circle">#}
-{#                        {% else %}#}
-{#                        <img src="{% static 'img/no_avatar.jpg' %}" alt="" class="circle">#}
-{#                        {% endif %}#}
-{##}
-{#                        <span class="title"><b>{{ review.user.first_name }} {{ review.user.last_name }}</b></span>#}
-{#                        <p>{{ review.user.username }}</p>#}
-{#                        <p>{{ review.date }}</p>#}
-{#                        <a href="{% url 'user-review' review.user.username movie_data.imdbID %}"#}
-{#                           class="secondary-content"><i class="material-icons">grade</i>{{ review.rate }} / 10</a>#}
-{#                    </li>#}
-{#                    {% endfor %}#}
-{##}
-{#                </ul>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#</div>#}
-{##}
-{##}
-{#{% endblock %}#}
+
+                <form method="POST">
+                    {% csrf_token %}
+                        {{ website_ratings_form|crispy }}
+                        <button style="display: inline-block; width:80px;" type="submit" class="btn btn-primary btn-block mb-4">Rate</button>
+                    {% if error_message %}
+                        <p class="error">{{ error_message }}</p>
+                    {% endif %}
+                </form>
+            </div>
+
+        <div class = "col-md-6 text-left">
+        <br>
+            <p><span style="color: darkgreen"><b>Title: </b></span><b>{{ result.Title }}</b></p>
+            <p><span style="color: darkgreen"><b>Plot: </b></span>{{ result.Plot }}</p>
+            <p><span style="color: darkgreen"><b>Type: </b></span>{{ result.Type }}</p>
+            <p><span style="color: darkgreen"><b>Released: </b></span>{{ result.Released }}</p>
+            <p><span style="color: darkgreen"><b>Runtime: </b></span>{{ result.Runtime }}</p>
+            <p><span style="color: darkgreen"><b>Awards: </b></span>{{ result.Awards }}</p>
+            <p><span style="color: darkgreen"><b>Country: </b></span>{{ result.Country }}</p>
+            <p><span style="color: darkgreen"><b>Language: </b></span>{{ result.Language }}</p>
+            <p><span style="color: darkgreen"><b>Rated: </b></span>{{ result.Rated }}</p>
+            <p><span style="color: darkgreen"><b>BoxOffice: </b></span>{{ result.BoxOffice }}</p>
+            <p><span style="color: darkgreen"><b>Production: </b></span>{{ result.Production }}</p>
+            <p><span style="color: darkgreen"><b>DVD: </b></span>{{ result.DVD }}</p>
+            <p><span style="color: darkgreen"><b>Website: </b></span>{{ result.Website }}</p>
+            <p><span style="color: darkgreen"><b>imdRating: </b></span>{{ result.imdbRating }}</p>
+            <p><span style="color: darkgreen"><b>imdbVotes: </b></span>{{ result.imdbVotes }}</p>
+            <p><span style="color: darkgreen"><b>Metascore: </b></span>{{ result.Metascore }}</p>
+        </div>
+            <style>
+
+                .form-container {
+                  display: flex;
+                  text-align: left;
+                  flex-direction: row;
+                  justify-content: flex-start;
+                }
+
+                .form-container form {
+                  margin-right: 10px;
+                }
+
+                .btn-primary {
+                    background-color: seagreen;
+                    border-color: seagreen;
+                }
+
+                .btn-primary:hover {
+                    background-color: darkgreen;
+                    border-color: darkgreen;
+                }
+
+                .container {
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  grid-gap: 20px;
+                }
+
+                .left-half {
+                  grid-column: 1 / 2;
+                }
+
+                .right-half {
+                  grid-column: 1 / 2;
+                }
+
+                .form-control:focus {
+                    border-color: darkgreen !important;
+                    box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.25) !important;
+
+                }
+
+                .form-control {
+                    width: 200px;
+                !important;
+                }
+
+            </style>
+        {% endblock %}
