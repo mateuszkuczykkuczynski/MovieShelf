@@ -1,122 +1,56 @@
-{#{% extends 'base.html' %}#}
-{#{% block title %}Search results{% endblock title %}#}
-{##}
-{#{% block content %}#}
-{#    {% if results.Search %}#}
-{#        {% for result in results.Search %}#}
-{#            <div class="card-content">#}
-{#                <a href=" {% url 'movie_details' result.imdbID %} "> {{ result.Title }}</a>#}
-{#                <span class="right"><i class="material-icons"></i>{{ result.Year }}</span>#}
-{#                <p>Poster: <b><img src="{{ result.Poster }}" alt=""></b></p>#}
-{#            </div>#}
-{#        {% endfor %}#}
-{#    {% else %}#}
-{#    <p>No results found.</p>#}
-{#    {% endif %}#}
-{#{% endblock %}#}
-
-
-{#{% extends 'base.html' %}#}
-{#{% block title %}Search results{% endblock title %}#}
-{##}
-{#{% block content %}#}
-{#    {% if results.Search %}#}
-{#        {% for result in results.Search %}#}
-{#            <div class="card-content">#}
-{#                <a href=" {% url 'movie_details' result.imdbID %} "> {{ result.Title }}</a>#}
-{#                <span class="right"><i class="material-icons"></i>{{ result.Year }}</span>#}
-{#                <p>Poster: <b><img src="{{ result.Poster }}" alt=""></b></p>#}
-{#            </div>#}
-{#        {% endfor %}#}
-{#        <div class="pagination">#}
-{#            <span class="step-links">#}
-{#                {% if results.has_previous %}#}
-{#                    <a href="?q={{ query }}&page=1">&laquo; pierwsza</a>#}
-{#                    <a href="?q={{ query }}&page={{ results.previous_page_number }}">poprzednia</a>#}
-{#        {% endif %}#}
-{##}
-{#        <span class="current-page">#}
-{#            Strona {{ results.number }} z {{ results.paginator.num_pages }}.#}
-{#        </span>#}
-{##}
-{#        {% if results.has_next %}#}
-{#            <a href="?q={{ query }}&page={{ results.next_page_number }}">następna</a>#}
-{#            <a href="?q={{ query }}&page={{ results.paginator.num_pages }}">ostatnia &raquo;</a>#}
-{#        {% endif %}#}
-{#    </span>#}
-{#    </div>#}
-{#    {% else %}#}
-{#        <p>No results found.</p>#}
-{#    {% endif %}#}
-{#{% endblock %}#}
-
 {% extends 'base.html' %}
 {% block title %}Search results{% endblock title %}
 
 {% block content %}
     {% if results.Search %}
-        {% for result in results.Search %}
-            <div class="card-content">
-                <a href=" {% url 'movie_details' result.imdbID %} "> {{ result.Title }}</a>
-                <span class="right"><i class="material-icons"></i>{{ result.Year }}</span>
-                <p>Poster: <b><img src="{{ result.Poster }}" alt=""></b></p>
+        <div class="row offset-md-2">
+            {% for result in results.Search %}
+                <div class="col-md-6">
+                    <div class="card-content">
+                        <h5><br><b><a style="color: darkgreen; text-decoration: none"
+                                      href=" {% url 'movie_details' result.imdbID %} "> {{ result.Title }}</a></b>
+                            <span class="right float-right mr-3"><i class="material-icons"></i>{{ result.Year }}</span>
+                        </h5>
+                        <p><b><a href=" {% url 'movie_details' result.imdbID %} "><img src="{{ result.Poster }}" alt=""></a></b>
+                        </p>
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:2 %}
+                    </div>
+                    <div class="row offset-md-2">
+                {% endif %}
+            {% endfor %}
             </div>
-        {% endfor %}
+        <br>
+        <div class="pagination pagination-container">
+        <span class="step-links">
+            {% if has_previous %}
+                <a style="color: darkgreen; font-size: 18px; text-decoration: none" href="?q={{ query }}&page=1">&laquo; First</a>
+                <a style="color: darkgreen; font-size: 18px; text-decoration: none"
+                   href="?q={{ query }}&page={{ page_number|add:"-1" }}">Previous</a>
+            {% endif %}
 
-        <div class="pagination">
-            <span class="step-links">
-                {% if has_previous %}
-                    <a href="?q={{ query }}&page=1">&laquo; pierwsza</a>
-                    <a href="?q={{ query }}&page={{ page_number|add:"-1" }}">poprzednia</a>
-                {% endif %}
-
-                <span class="current-page">
-                    Strona {{ page_number }} z {{ total_pages }}.
-                </span>
-
-                {% if has_next %}
-                    <a href="?q={{ query }}&page={{ page_number|add:"1" }}">następna</a>
-                    <a href="?q={{ query }}&page={{ total_pages }}">ostatnia &raquo;</a>
-                {% endif %}
+            <span class="current-page" style="font-size: 18px">
+                Page {{ page_number }} z {{ total_pages }}.
             </span>
+
+            {% if has_next %}
+                <a style="color: darkgreen; font-size: 18px; text-decoration: none"
+                   href="?q={{ query }}&page={{ page_number|add:"1" }}">Next</a>
+                <a style="color: darkgreen; font-size: 18px; text-decoration: none"
+                   href="?q={{ query }}&page={{ total_pages }}">Last &raquo;</a>
+            {% endif %}
+        </span>
         </div>
     {% else %}
         <p>No results found.</p>
     {% endif %}
+    <style>
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+    </style>
 {% endblock %}
-
-
-{#{% extends 'base.html' %}#}
-{#{% block title %}Search results{% endblock title %}#}
-{##}
-{#{% block content %}#}
-{#    {% if results.Search %}#}
-{#        {% for result in results.Search %}#}
-{#            <div class="card-content">#}
-{#                <a href="{% url 'movie_details' result.imdbID %}">{{ result.Title }}</a>#}
-{#                <span class="right"><i class="material-icons"></i>{{ result.Year }}</span>#}
-{#                <p>Poster: <b><img src="{{ result.Poster }}" alt=""></b></p>#}
-{#            </div>#}
-{#        {% endfor %}#}
-{##}
-{#        <div class="pagination">#}
-{#            <span class="step-links">#}
-{#                {% if results.has_previous %}#}
-{#                    <a href="?q={{ query }}&page=1">&laquo; pierwsza</a>#}
-{#                    <a href="?q={{ query }}&page={{ results.previous_page_number }}">poprzednia</a>#}
-{#                {% endif %}#}
-{##}
-{#                <span class="current-page">#}
-{#                    Strona {{ results.number }} z {{ results.paginator.num_pages }}.#}
-{#                </span>#}
-{##}
-{#                {% if results.has_next %}#}
-{#                    <a href="?q={{ query }}&page={{ results.next_page_number }}">następna</a>#}
-{#                    <a href="?q={{ query }}&page={{ results.paginator.num_pages }}">ostatnia &raquo;</a>#}
-{#                {% endif %}#}
-{#            </span>#}
-{#        </div>#}
-{#    {% else %}#}
-{#        <p>No results found.</p>#}
-{#    {% endif %}#}
-{#{% endblock %}#}

@@ -2,145 +2,130 @@
 {% load crispy_forms_filters %}
 {% block title %}Movie Details{% endblock title %}
 
-    {% block content %}
-        <div class = "col-md-6 text-left">
+{% block content %}
+    <div class="col-md-6 text-left">
         {% if our_db is True %}
             <br><p><b><img src="{{ result.Poster.url }}" alt=""></b></p>
         {% else %}
             <p><b><img src="{{ result.Poster }}" alt=""></b></p>
         {% endif %}
         <div class="form-container">
-                <form method="POST">
-                    {% csrf_token %}
+            <form method="POST">
+                {% csrf_token %}
 
-                    {{ watched_form|crispy }}
-                    <button style="width:100px;" type="submit" class="btn btn-primary btn-block mb-4">Watched
+                {{ watched_form|crispy }}
+                <button style="width:100px;" type="submit" class="btn btn-primary btn-block mb-4">Watched
                 </button>
-                </form>
-                <br><form method="POST">
-                    {% csrf_token %}
+            </form>
+            <br>
+            <form method="POST">
+                {% csrf_token %}
 
-                    {{ to_watch_form|crispy }}
-                    <button style="width:120px;" type="submit" class="btn btn-primary btn-block mb-4">To watch
+                {{ to_watch_form|crispy }}
+                <button style="width:120px;" type="submit" class="btn btn-primary btn-block mb-4">To watch
                 </button>
-                </form>
-            </div>
-            {% if our_db is True %}
-{#                    <br><p><b><img src="{{ result.Poster.url }}" alt=""></b></p>#}
-                    <p><span style="color: darkgreen;"><b>Genre: </b></span><b>{% for genre in result.Genre.all %}</b>
-                        <a style="color: black" href="{{ genre.get_absolute_url }}">{{ genre }} </a> {% endfor %}</p>
-                    <p><span style="color: darkgreen;"><b>Actors: </b></span><b>{% for actor in result.Actors.all %}</b>
-                        <a style="color: black" href="{{ actor.get_absolute_url }}"> {{ actor }} </a>{% endfor %}</p>
-                    <p><span style="color: darkgreen;"><b>Director: </b></span><b>{% for director in result.Director.all %} </b>
-                        <a style="color: black" href="{{ director.get_absolute_url }}"> {{ director }}</a> {% endfor %}</p>
-                    <p><span style="color: darkgreen;"><b>Writer: </b></span><b>{% for writer in result.Writer.all %}</b>
-                        <a style="color: black" href="{{ writer.get_absolute_url }}">{{ writer }}</a> {% endfor %}</p>
-                    <p><span style="color: darkgreen;"><b>Rating: </b></span><b>{% for rating in result.Rating.all %}</b> {{ rating }} {{ rating.value }}{% endfor %}
-                    </p>
-                    <p><span style="color: darkgreen;"><b>MovieShelf Users Rating: </b></span>{{ avg_rating }}</p>
-                {% else %}
-{#                    <p><b><img src="{{ result.Poster }}" alt=""></b></p>#}
-                    <p>Genre: <b> {{ result.Genre }} </b></p>
-                    <p>Actors: <b>{{ result.Actors }}</b></p>
-                    <p>Director: <b>{{ result.Director }}</b></p>
-                    <p>Writer: <b>{{ result.Writer }}</b></p>
-                    <p>Rating: <b>{{ result.Ratings.0.Source }} {{ result.Ratings.0.Value }}</b>
-                    <p>Rating: <b>{{ result.Ratings.1.Source }} {{ result.Ratings.1.Value }}</b>
-                    <p>Rating: <b>{{ result.Ratings.2.Source }} {{ result.Ratings.2.Value }}</b>
-                {% endif %}
-{#            <div class="form-container">#}
-{#                <form method="POST">#}
-{#                    {% csrf_token %}#}
-{##}
-{#                    {{ watched_form|crispy }}#}
-{#                    <button style="width:100px;" type="submit" class="btn btn-primary btn-block mb-4">Watched#}
-{#                </button>#}
-{#                </form>#}
-{#                <br><form method="POST">#}
-{#                    {% csrf_token %}#}
-{##}
-{#                    {{ to_watch_form|crispy }}#}
-{#                    <button style="width:120px;" type="submit" class="btn btn-primary btn-block mb-4">To watch#}
-{#                </button>#}
-{#                </form>#}
-{#            </div>#}
-
-                <form method="POST">
-                    {% csrf_token %}
-                        {{ website_ratings_form|crispy }}
-                        <button style="display: inline-block; width:80px;" type="submit" class="btn btn-primary btn-block mb-4">Rate</button>
-                    {% if error_message %}
-                        <p class="error">{{ error_message }}</p>
-                    {% endif %}
-                </form>
-            </div>
-
-        <div class = "col-md-6 text-left">
-        <br>
-            <p><span style="color: darkgreen"><b>Title: </b></span><b>{{ result.Title }}</b></p>
-            <p><span style="color: darkgreen"><b>Plot: </b></span>{{ result.Plot }}</p>
-            <p><span style="color: darkgreen"><b>Type: </b></span>{{ result.Type }}</p>
-            <p><span style="color: darkgreen"><b>Released: </b></span>{{ result.Released }}</p>
-            <p><span style="color: darkgreen"><b>Runtime: </b></span>{{ result.Runtime }}</p>
-            <p><span style="color: darkgreen"><b>Awards: </b></span>{{ result.Awards }}</p>
-            <p><span style="color: darkgreen"><b>Country: </b></span>{{ result.Country }}</p>
-            <p><span style="color: darkgreen"><b>Language: </b></span>{{ result.Language }}</p>
-            <p><span style="color: darkgreen"><b>Rated: </b></span>{{ result.Rated }}</p>
-            <p><span style="color: darkgreen"><b>BoxOffice: </b></span>{{ result.BoxOffice }}</p>
-            <p><span style="color: darkgreen"><b>Production: </b></span>{{ result.Production }}</p>
-            <p><span style="color: darkgreen"><b>DVD: </b></span>{{ result.DVD }}</p>
-            <p><span style="color: darkgreen"><b>Website: </b></span>{{ result.Website }}</p>
-            <p><span style="color: darkgreen"><b>imdRating: </b></span>{{ result.imdbRating }}</p>
-            <p><span style="color: darkgreen"><b>imdbVotes: </b></span>{{ result.imdbVotes }}</p>
-            <p><span style="color: darkgreen"><b>Metascore: </b></span>{{ result.Metascore }}</p>
+            </form>
         </div>
-            <style>
+        {% if our_db is True %}
+            <p><span style="color: darkgreen;"><b>Genre: </b></span><b>{% for genre in result.Genre.all %}</b>
+                <a style="color: black" href="{{ genre.get_absolute_url }}">{{ genre }} </a> {% endfor %}</p>
+            <p><span style="color: darkgreen;"><b>Actors: </b></span><b>{% for actor in result.Actors.all %}</b>
+                <a style="color: black" href="{{ actor.get_absolute_url }}"> {{ actor }} </a>{% endfor %}</p>
+            <p><span style="color: darkgreen;"><b>Director: </b></span><b>{% for director in result.Director.all %} </b>
+                <a style="color: black" href="{{ director.get_absolute_url }}"> {{ director }}</a> {% endfor %}</p>
+            <p><span style="color: darkgreen;"><b>Writer: </b></span><b>{% for writer in result.Writer.all %}</b>
+                <a style="color: black" href="{{ writer.get_absolute_url }}">{{ writer }}</a> {% endfor %}</p>
+            <p><span style="color: darkgreen;"><b>Rating: </b></span><b>{% for rating in result.Rating.all %}</b>
+                {{ rating }} {{ rating.value }}{% endfor %}
+            </p>
+            <p><span style="color: darkgreen;"><b>MovieShelf Users Rating: </b></span>{{ avg_rating }}</p>
+        {% else %}
+            <p>Genre: <b> {{ result.Genre }} </b></p>
+            <p>Actors: <b>{{ result.Actors }}</b></p>
+            <p>Director: <b>{{ result.Director }}</b></p>
+            <p>Writer: <b>{{ result.Writer }}</b></p>
+            <p>Rating: <b>{{ result.Ratings.0.Source }} {{ result.Ratings.0.Value }}</b>
+            <p>Rating: <b>{{ result.Ratings.1.Source }} {{ result.Ratings.1.Value }}</b>
+            <p>Rating: <b>{{ result.Ratings.2.Source }} {{ result.Ratings.2.Value }}</b>
+        {% endif %}
 
-                .form-container {
-                  display: flex;
-                  text-align: left;
-                  flex-direction: row;
-                  justify-content: flex-start;
-                }
+        <form method="POST">
+            {% csrf_token %}
+            {{ website_ratings_form|crispy }}
+            <button style="display: inline-block; width:80px;" type="submit" class="btn btn-primary btn-block mb-4">
+                Rate
+            </button>
+            {% if error_message %}
+                <p class="error">{{ error_message }}</p>
+            {% endif %}
+        </form>
+    </div>
+    <div class="col-md-6 text-left">
+        <br>
+        <p><span style="color: darkgreen"><b>Title: </b></span><b>{{ result.Title }}</b></p>
+        <p><span style="color: darkgreen"><b>Plot: </b></span>{{ result.Plot }}</p>
+        <p><span style="color: darkgreen"><b>Type: </b></span>{{ result.Type }}</p>
+        <p><span style="color: darkgreen"><b>Released: </b></span>{{ result.Released }}</p>
+        <p><span style="color: darkgreen"><b>Runtime: </b></span>{{ result.Runtime }}</p>
+        <p><span style="color: darkgreen"><b>Awards: </b></span>{{ result.Awards }}</p>
+        <p><span style="color: darkgreen"><b>Country: </b></span>{{ result.Country }}</p>
+        <p><span style="color: darkgreen"><b>Language: </b></span>{{ result.Language }}</p>
+        <p><span style="color: darkgreen"><b>Rated: </b></span>{{ result.Rated }}</p>
+        <p><span style="color: darkgreen"><b>BoxOffice: </b></span>{{ result.BoxOffice }}</p>
+        <p><span style="color: darkgreen"><b>Production: </b></span>{{ result.Production }}</p>
+        <p><span style="color: darkgreen"><b>DVD: </b></span>{{ result.DVD }}</p>
+        <p><span style="color: darkgreen"><b>Website: </b></span>{{ result.Website }}</p>
+        <p><span style="color: darkgreen"><b>imdRating: </b></span>{{ result.imdbRating }}</p>
+        <p><span style="color: darkgreen"><b>imdbVotes: </b></span>{{ result.imdbVotes }}</p>
+        <p><span style="color: darkgreen"><b>Metascore: </b></span>{{ result.Metascore }}</p>
+    </div>
+    <style>
 
-                .form-container form {
-                  margin-right: 10px;
-                }
+        .form-container {
+            display: flex;
+            text-align: left;
+            flex-direction: row;
+            justify-content: flex-start;
+        }
 
-                .btn-primary {
-                    background-color: seagreen;
-                    border-color: seagreen;
-                }
+        .form-container form {
+            margin-right: 10px;
+        }
 
-                .btn-primary:hover {
-                    background-color: darkgreen;
-                    border-color: darkgreen;
-                }
+        .btn-primary {
+            background-color: seagreen;
+            border-color: seagreen;
+        }
 
-                .container {
-                  display: grid;
-                  grid-template-columns: 1fr 1fr;
-                  grid-gap: 20px;
-                }
+        .btn-primary:hover {
+            background-color: darkgreen;
+            border-color: darkgreen;
+        }
 
-                .left-half {
-                  grid-column: 1 / 2;
-                }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 20px;
+        }
 
-                .right-half {
-                  grid-column: 1 / 2;
-                }
+        .left-half {
+            grid-column: 1 / 2;
+        }
 
-                .form-control:focus {
-                    border-color: darkgreen !important;
-                    box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.25) !important;
+        .right-half {
+            grid-column: 1 / 2;
+        }
 
-                }
+        .form-control:focus {
+            border-color: darkgreen !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.25) !important;
 
-                .form-control {
-                    width: 200px;
-                !important;
-                }
+        }
 
-            </style>
-        {% endblock %}
+        .form-control {
+            width: 200px;
+        !important;
+        }
+
+    </style>
+{% endblock %}
