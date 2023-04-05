@@ -13,16 +13,16 @@
             <form method="POST">
                 {% csrf_token %}
 
-                {{ watched_form|crispy }}
-                <button style="width:100px;" type="submit" class="btn btn-primary btn-block mb-4">Watched
+                {{ form.watched_form|crispy }}
+                <button style="width:100px;" type="submit" class="btn btn-primary btn-block mb-4" name="watched">Watched
                 </button>
             </form>
             <br>
             <form method="POST">
                 {% csrf_token %}
 
-                {{ to_watch_form|crispy }}
-                <button style="width:120px;" type="submit" class="btn btn-primary btn-block mb-4">To watch
+                {{ form.to_watch_form|crispy }}
+                <button style="width:120px;" type="submit" class="btn btn-primary btn-block mb-4" name="to_watch">To watch
                 </button>
             </form>
         </div>
@@ -52,7 +52,7 @@
         <form method="POST">
             {% csrf_token %}
             {{ website_ratings_form|crispy }}
-            <button style="display: inline-block; width:80px;" type="submit" class="btn btn-primary btn-block mb-4">
+            <button style="display: inline-block; width:80px;" type="submit" class="btn btn-primary btn-block mb-4" name="website_ratings">
                 Rate
             </button>
             {% if error_message %}
@@ -128,4 +128,71 @@
         }
 
     </style>
-{% endblock %}
+{% endblock content %}
+
+{#{% extends 'base.html' %}#}
+{#{% block content %}#}
+{#    <p><b>Title: {{ result.Title }}</b></p>#}
+{#    <p>Type: <b>{{ result.Type }}</b></p>#}
+{#    <p>Plot: <b>{{ result.Plot }}</b></p>#}
+{#    <p>Year: <b>{{ result.Year }}</b></p>#}
+{#    <p>Rated: <b>{{ result.Rated }}</b></p>#}
+{#    <p>Released: <b>{{ result.Released }}</b></p>#}
+{#    <p>Language: <b>{{ result.Language }}</b></p>#}
+{#    <p>Country: <b>{{ result.Country }}</b></p>#}
+{#    <p>Awards: <b>{{ result.Awards }}</b></p>#}
+{#    <p>imdRating: <b>{{ result.imdbRating }}</b></p>#}
+{#    <p>imdbVotes: <b>{{ result.imdbVotes }}</b></p>#}
+{#    <p>BoxOffice: <b>{{ result.BoxOffice }}</b></p>#}
+{#    <p>Production: <b>{{ result.Production }}</b></p>#}
+{#    <p>Website: <b>{{ result.Website }}</b></p>#}
+{#    <p>Runtime: <b>{{ result.Runtime }}</b></p>#}
+{#    <p>Metascore: <b>{{ result.Metascore }}</b></p>#}
+{#    <p>DVD: <b>{{ result.DVD }}</b></p>#}
+{#    <form method="POST">#}
+{#            {% csrf_token %}#}
+{##}
+{#            {{ watched_form.as_p }}#}
+{#            <button type="submit" name="watched">Watched</button>#}
+{#    </form>#}
+{##}
+{#    <form method="POST">#}
+{#            {% csrf_token %}#}
+{##}
+{#            {{ to_watch_form.as_p }}#}
+{#            <button type="submit" name="to_watch">To Watch</button>#}
+{#    </form>#}
+{##}
+{#    <form method="POST">#}
+{#            {% csrf_token %}#}
+{##}
+{#            {{ website_ratings_form.as_p }}#}
+{#            <button type="submit" name="website_ratings">Rate</button>#}
+{##}
+{#            {% if error_message %}#}
+{#                <p class="error">{{ error_message }}</p>#}
+{#            {% endif %}#}
+{#    </form>#}
+{#    {% if our_db is True %}#}
+{#        <p>Poster: <b><img src="{{ result.Poster.url }}" alt=""></b></p>#}
+{#        <p>Genre: <b>{% for genre in result.Genre.all %}</b>#}
+{#            <a href="{{ genre.get_absolute_url }}">{{ genre }} </a> {% endfor %}</p>#}
+{#        <p>Actors: <b>{% for actor in result.Actors.all %}</b>#}
+{#            <a href="{{ actor.get_absolute_url }}"> {{ actor }} </a>{% endfor %}</p>#}
+{#        <p>Director: <b>{% for director in result.Director.all %} </b>#}
+{#            <a href="{{ director.get_absolute_url }}"> {{ director }}</a> {% endfor %}</p>#}
+{#        <p>Writer: <b>{% for writer in result.Writer.all %}</b>#}
+{#            <a href="{{ writer.get_absolute_url }}">{{ writer }}</a> {% endfor %}</p>#}
+{#        <p>Rating: <b>{% for rating in result.Rating.all %}</b> {{ rating }} {{ rating.value }}{% endfor %} </p>#}
+{#        <p>MovieShelf Users Rating: <b>{{ avg_rating }}</b></p>#}
+{#   {% else %}#}
+{#        <p>Poster: <b><img src="{{ result.Poster }}" alt=""></b></p>#}
+{#        <p>Genre: <b> {{ result.Genre }} </b></p>#}
+{#        <p>Actors: <b>{{ result.Actors }}</b></p>#}
+{#        <p>Director: <b>{{ result.Director }}</b></p>#}
+{#        <p>Writer: <b>{{ result.Writer }}</b></p>#}
+{#        <p>Rating: <b>{{ result.Ratings.0.Source }} {{ result.Ratings.0.Value }}</b>#}
+{#        <p>Rating: <b>{{ result.Ratings.1.Source }} {{ result.Ratings.1.Value }}</b>#}
+{#        <p>Rating: <b>{{ result.Ratings.2.Source }} {{ result.Ratings.2.Value }}</b>#}
+{#    {% endif %}#}
+{#{% endblock %}#}

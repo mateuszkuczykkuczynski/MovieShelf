@@ -1,16 +1,33 @@
+{% extends 'base.html' %}
 {% block title %}Positions to watch by user{% endblock title %}
 
 {% block content %}
+    {% if is_current_user %}
+        <h3>Positions that wait to be watched by you!</h3>
+    {% else %}
+        <h3>Positions that wait to be watched by {{ user.username }}</h3>
+    {% endif %}
 
-        <h1>Here you can find all positions to watch from this user shelf</h1>
-        <body>
-        {% if to_watch_all %}
+    {% if to_watch_all  %}
+        <div class="row offset-md-2">
             {% for pos in to_watch_all %}
-                <a>{{ pos }}</a>
+                <div class="col-md-6">
+                    <div class="card-content">
+                        <h5><br><b><a style="color: darkgreen; text-decoration: none"
+                                      href=" {% url 'movie_details' pos.imdbID %} "> {{ pos.Title }}</a></b>
+                            <span class="right float-right mr-3"><i class="material-icons"></i>{{ pos.Year }}</span>
+                        </h5>
+                        <p><b><a href=" {% url 'movie_details' pos.imdbID %} "><img src="{{ pos.Poster.url }}" alt=""></a></b>
+                        </p>
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:2 %}
+                    </div>
+                    <div class="row offset-md-2">
+                {% endif %}
             {% endfor %}
-        {% else %}
-            <h1>No position to watch yet</h1>
-        {% endif %}
-        </body>
-
+            </div>
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
 {% endblock content %}
