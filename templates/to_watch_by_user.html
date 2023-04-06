@@ -2,12 +2,14 @@
 {% block title %}Positions to watch by user{% endblock title %}
 
 {% block content %}
-    {% if is_current_user %}
-        <h3>Positions that wait to be watched by you!</h3>
-    {% else %}
-        <h3>Positions that wait to be watched by {{ user.username }}</h3>
-    {% endif %}
-
+    <br>
+    <div style="text-align:center; color:darkgreen">
+        {% if is_current_user %}
+            <h3>Positions that wait to be watched by you!</h3>
+        {% else %}
+            <h3>Positions that wait to be watched by {{ user.username }}</h3>
+        {% endif %}
+    </div>
     {% if to_watch_all  %}
         <div class="row offset-md-2">
             {% for pos in to_watch_all %}

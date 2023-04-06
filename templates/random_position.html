@@ -1,2 +1,40 @@
-<h1>Your movie for tonight</h1>
-<p>Title: {{ position.Title }}</p>
+{% extends 'base.html' %}
+{% block title %}Random position{% endblock title %}
+
+{% block content %}
+    <br>
+    <div style="text-align:center; color:darkgreen">
+        <h3>Your movie or series for tonight!</h3>
+        <div style="text-align:center;">
+            <br>
+            <div class="col-md-6 mx-auto">
+                <div class="card-content">
+                    <h5 class="text-center"><b><a style="color: darkgreen; text-decoration: none"
+                                                  href="{% url 'movie_details' position.imdbID %}">{{ position.Title }}</a></b>
+                        <span class="right float-right mr-3"><i class="material-icons"></i>{{ position.Year }}</span>
+                    </h5>
+                    <p class="text-center"><b><a href="{% url 'movie_details' position.imdbID %}"><img
+                            src="{{ position.Poster.url }}" alt=""></a></b>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="text-align:center;">
+        <br>
+        <button style="display: inline-block; width:80px;" class="btn btn-primary btn-block mb-4"
+                onclick="location.reload()">Draw
+        </button>
+    </div>
+    <style>
+        .btn-primary {
+            background-color: seagreen;
+            border-color: seagreen;
+        }
+
+        .btn-primary:hover {
+            background-color: darkgreen;
+            border-color: darkgreen;
+        }
+    </style>
+{% endblock content %}
