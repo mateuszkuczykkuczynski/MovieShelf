@@ -1,8 +1,35 @@
-<p>{{ genre.genre_type }}</p>
-{% if genre_results %}
-    {% for movie in genre_results %}
-        <p>{{ movie }}</p>
-    {% endfor %}
-{% else %}
-    <p>No results yes with provided genre type</p>
-{% endif %}
+{% extends 'base.html' %}
+{% block title %}Genre Types{% endblock title %}
+
+{% block content %}
+        <br>
+    <div style="text-align:center; color:darkgreen">
+            <h3> Maybe you'd like to watch some {{ genre.genre_type }}? </h3>
+    </div>
+    {% if genre_results %}
+        <div class="row offset-md-2">
+            {% for movie in genre_results %}
+                <div class="col-md-6">
+                    <div class="card-content">
+                        <h5><br><b><a style="color: darkgreen; text-decoration: none"
+                                      href=" {% url 'movie_details' movie.imdbID %} "> {{ movie }}</a></b>
+                            {% if movie.Year %}
+                                <span class="right float-right mr-3"><i class="material-icons"></i>{{ movie.Year }}</span>
+                            {% endif %}
+                        </h5>
+                        {% if movie.Poster %}
+                            <p><b><a href=" {% url 'movie_details' movie.imdbID %} "><img src="{{ movie.Poster.url }}" alt=""></a></b>
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:2 %}
+                    </div>
+                    <div class="row offset-md-2">
+                {% endif %}
+            {% endfor %}
+            </div>
+    {% else %}
+        <p>None movies in database connected with this genre type or something gone wrong. Please contact website administrator.</p>
+    {% endif %}
+{% endblock content %}

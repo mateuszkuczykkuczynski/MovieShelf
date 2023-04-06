@@ -28,14 +28,14 @@
         </div>
         {% if our_db is True %}
             <p><span style="color: darkgreen;"><b>Genre: </b></span><b>{% for genre in result.Genre.all %}</b>
-                <a style="color: black" href="{{ genre.get_absolute_url }}">{{ genre }} </a> {% endfor %}</p>
-            <p><span style="color: darkgreen;"><b>Actors: </b></span><b>{% for actor in result.Actors.all %}</b>
-                <a style="color: black" href="{{ actor.get_absolute_url }}"> {{ actor }} </a>{% endfor %}</p>
-            <p><span style="color: darkgreen;"><b>Director: </b></span><b>{% for director in result.Director.all %} </b>
-                <a style="color: black" href="{{ director.get_absolute_url }}"> {{ director }}</a> {% endfor %}</p>
-            <p><span style="color: darkgreen;"><b>Writer: </b></span><b>{% for writer in result.Writer.all %}</b>
-                <a style="color: black" href="{{ writer.get_absolute_url }}">{{ writer }}</a> {% endfor %}</p>
-            <p><span style="color: darkgreen;"><b>Rating: </b></span><b>{% for rating in result.Rating.all %}</b>
+                <a style="color: black; text-decoration: none" href="{{ genre.get_absolute_url }}"><b>{{ genre }} </b></a> {% endfor %}</p>
+            <p><span style="color: darkgreen; text-decoration: none"><b>Actors: </b></span><b>{% for actor in result.Actors.all %}</b>
+                <a style="color: black; text-decoration: none" href="{{ actor.get_absolute_url }}"> <b>{{ actor }} </b></a>{% endfor %}</p>
+            <p><span style="color: darkgreen; text-decoration: none"><b>Director: </b></span><b>{% for director in result.Director.all %} </b>
+                <a style="color: black; text-decoration: none" href="{{ director.get_absolute_url }}"> <b>{{ director }}</b></a> {% endfor %}</p>
+            <p><span style="color: darkgreen; text-decoration: none"><b>Writer: </b></span><b>{% for writer in result.Writer.all %}</b>
+                <a style="color: black; text-decoration: none" href="{{ writer.get_absolute_url }}"><b>{{ writer }}</b></a> {% endfor %}</p>
+            <p><span style="color: darkgreen; text-decoration: none"><b>Rating: </b></span><b>{% for rating in result.Rating.all %}</b>
                 {{ rating }} {{ rating.value }}{% endfor %}
             </p>
             <p><span style="color: darkgreen;"><b>MovieShelf Users Rating: </b></span>{{ avg_rating }}</p>
