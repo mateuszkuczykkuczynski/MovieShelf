@@ -256,7 +256,8 @@ def actor_details_view(request, actor_slug):
     if actor.slug is None:
         actor.slug = slugify(actor.name)
         actor.save()
-    actor_movies = actor.movie_actor.values_list("Title", flat=True)
+    # actor_movies = actor.movie_actor.values_list("Title", flat=True)
+    actor_movies = actor.movie_actor.all()
     return render(request, 'actor_details.html', {'actor': actor,
                                                   'actor_movies': actor_movies})
 
@@ -264,7 +265,7 @@ def actor_details_view(request, actor_slug):
 @login_required
 def director_details_view(request, director_slug):
     director = get_object_or_404(Director, slug=director_slug)
-    director_movies = director.movie_director.values_list("Title", flat=True)
+    director_movies = director.movie_director.all()
     return render(request, 'director_details.html', {'director': director,
                                                      'director_movies': director_movies})
 
@@ -272,7 +273,7 @@ def director_details_view(request, director_slug):
 @login_required
 def writer_details_view(request, writer_slug):
     writer = get_object_or_404(Writer, slug=writer_slug)
-    writer_movies = writer.movie_writer.values_list("Title", flat=True)
+    writer_movies = writer.movie_writer.all()
     return render(request, 'writer_details.html', {'writer': writer,
                                                    'writer_movies': writer_movies})
 
@@ -280,7 +281,7 @@ def writer_details_view(request, writer_slug):
 @login_required
 def genre_detail_view(request, genre_slug):
     genre = get_object_or_404(Genre, slug=genre_slug)
-    genre_results = genre.movie_genre.values_list("Title", flat=True)
+    genre_results = genre.movie_genre.all()
     return render(request, 'genre_details.html', {'genre': genre,
                                                   'genre_results': genre_results})
 
@@ -291,7 +292,13 @@ def random_position_view(request):
     random_index = randint(0, count - 1)
     position = Movie.objects.all()[random_index]
     context = {'position': position}
-    return render(request, 'random_position.html', context)
+    # noinspection PyBroadException
+    try:
+        return render(request, 'random_position.html', context)
+    except Exception:
+        error_message = 'No position in database that could be drawn or something gone wrong. ' \
+                        'Please contact website administrator.'
+        return HttpResponseBadRequest(error_message)
 
 
 class PositionsWatchedByUserView(LoginRequiredMixin, ListView):
@@ -301,8 +308,6 @@ class PositionsWatchedByUserView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user_id = self.kwargs['user_id']
-        # user_profile = get_object_or_404(UserProfile, pk=user_id)
-        # watched_movies = user_profile.watched_by_user.watched.all()
         user_profile = UserProfile.objects.get(user=user_id)
         watched_movies = user_profile.watched_by_user.watched.all()
         return watched_movies
@@ -312,8 +317,18 @@ class PositionsWatchedByUserView(LoginRequiredMixin, ListView):
         try:
             return super(PositionsWatchedByUserView, self).get(request, *args, **kwargs)
         except Exception:
-            error_message = 'Bad key value or required key is missing from the request'
+            error_message = 'No position on list or something gone wrong. Please contact website administrator.'
             return HttpResponseBadRequest(error_message)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_id = self.kwargs['user_id']
+        if self.request.user.is_authenticated and self.request.user.id == user_id:
+            context['is_current_user'] = True
+        else:
+            context['is_current_user'] = False
+            context['profile'] = UserProfile.objects.get(user=user_id)
+        return context
 
 
 class PositionsToWatchByUserView(LoginRequiredMixin, ListView):
@@ -332,5 +347,15 @@ class PositionsToWatchByUserView(LoginRequiredMixin, ListView):
         try:
             return super(PositionsToWatchByUserView, self).get(request, *args, **kwargs)
         except Exception:
-            error_message = 'Bad key value or required key is missing from the request'
+            error_message = 'No position on list or something gone wrong. Please contact website administrator.'
             return HttpResponseBadRequest(error_message)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_id = self.kwargs['user_id']
+        if self.request.user.is_authenticated and self.request.user.id == user_id:
+            context['is_current_user'] = True
+        else:
+            context['is_current_user'] = False
+            context['profile'] = UserProfile.objects.get(user=user_id)
+        return context
