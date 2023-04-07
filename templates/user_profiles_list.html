@@ -7,9 +7,10 @@
         <br>
         <h2>MovieShelf Members</h2>
         <body>
-            {% for profile in all_users_profiles %}
-                <h5><a href="{% url 'user_profile' pk=profile.user.pk %}" style="color: darkgreen;">{{ profile.user.username}}</a></h5>
-            {% endfor %}
+        {% for profile in all_users_profiles %}
+            <h5><a href="{% url 'user_profile' pk=profile.user.pk %}"
+                   style="color: darkgreen;">{{ profile.user.username }}</a></h5>
+        {% endfor %}
         </body>
     </div>
 {% endblock content %}

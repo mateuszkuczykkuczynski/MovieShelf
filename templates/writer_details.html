@@ -2,9 +2,9 @@
 {% block title %}Writer Details{% endblock title %}
 
 {% block content %}
-        <br>
+    <br>
     <div style="text-align:center; color:darkgreen">
-            <h3>{{ writer.name }} wrote those! </h3>
+        <h3>{{ writer.name }} wrote those! </h3>
     </div>
     {% if writer_movies %}
         <div class="row offset-md-2">
@@ -14,12 +14,14 @@
                         <h5><br><b><a style="color: darkgreen; text-decoration: none"
                                       href=" {% url 'movie_details' movie.imdbID %} "> {{ movie }}</a></b>
                             {% if movie.Year %}
-                                <span class="right float-right mr-3"><i class="material-icons"></i>{{ movie.Year }}</span>
+                                <span class="right float-right mr-3"><i
+                                        class="material-icons"></i>{{ movie.Year }}</span>
                             {% endif %}
                         </h5>
                         {% if movie.Poster %}
-                            <p><b><a href=" {% url 'movie_details' movie.imdbID %} "><img src="{{ movie.Poster.url }}" alt=""></a></b>
-                        </p>
+                            <p><b><a href=" {% url 'movie_details' movie.imdbID %} "><img src="{{ movie.Poster.url }}"
+                                                                                          alt=""></a></b>
+                            </p>
                         {% endif %}
                     </div>
                 </div>
@@ -30,6 +32,7 @@
             {% endfor %}
             </div>
     {% else %}
-        <p>None movies in database connected with this writer or something gone wrong. Please contact website administrator.</p>
+        <p>None movies in database connected with this writer or something gone wrong. Please contact website
+            administrator.</p>
     {% endif %}
 {% endblock content %}

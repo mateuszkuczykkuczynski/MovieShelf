@@ -4,24 +4,24 @@
 {% block title %} Delete User Profile {% endblock %}
 
 {% block content %}
-{% if user.is_authenticated %}
-    <div class="d-flex flex-column align-items-center justify-content-center">
-    <br>
-    <h2>Are you sure you want to delete your profile?</h2>
-    <div class="form-group">
-        <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form|crispy }}
+    {% if user.is_authenticated %}
+        <div class="d-flex flex-column align-items-center justify-content-center">
             <br>
-        <button style="width:250px;" type="submit" class="btn btn-primary btn-block mb-4">Sure!
-                </button>
-        </form>
-    </div>
-    </div>
-{% else %}
-You shouldn't be here (and you know it)!
+            <h2>Are you sure you want to delete your profile?</h2>
+            <div class="form-group">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <br>
+                    <button style="width:250px;" type="submit" class="btn btn-primary btn-block mb-4">Sure!
+                    </button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        You shouldn't be here (and you know it)!
 
-{% endif %}
+    {% endif %}
     <style>
         .btn-primary {
             background-color: seagreen;
@@ -32,6 +32,7 @@ You shouldn't be here (and you know it)!
             background-color: darkgreen;
             border-color: darkgreen;
         }
+
         .d-flex {
             margin-top: 150px;
         }

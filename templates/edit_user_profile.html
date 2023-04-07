@@ -4,31 +4,31 @@
 
 {% block content %}
 
-{% if user.is_authenticated %}
+    {% if user.is_authenticated %}
 
-    <br>
-    <h2>Edit your profile!</h2>
-    <div class="form-group">
-        <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="mb-3">
-            {{ form.avatar|as_crispy_field }}
-        </div>
-        <div class="mb-3">
-            {{ form.socials|as_crispy_field }}
-        </div>
-        <div class="mb-3">
-            {{ form.bio|as_crispy_field }}
-        </div>
-        <button style="width:165px;" type="submit" class="btn btn-primary btn-block mb-4">Done
+        <br>
+        <h2>Edit your profile!</h2>
+        <div class="form-group">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.avatar|as_crispy_field }}
+                </div>
+                <div class="mb-3">
+                    {{ form.socials|as_crispy_field }}
+                </div>
+                <div class="mb-3">
+                    {{ form.bio|as_crispy_field }}
+                </div>
+                <button style="width:165px;" type="submit" class="btn btn-primary btn-block mb-4">Done
                 </button>
-        </form>
-    </div>
-{% else %}
-You shouldn't be here (and you know it)!
+            </form>
+        </div>
+    {% else %}
+        You shouldn't be here (and you know it)!
 
-{% endif %}
-<style>
+    {% endif %}
+    <style>
         .btn-primary {
             background-color: seagreen;
             border-color: seagreen;
@@ -44,6 +44,7 @@ You shouldn't be here (and you know it)!
             box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.25) !important;
 
         }
+
         .form-group #id_avatar {
             width: 520px;
             height: 38px;
