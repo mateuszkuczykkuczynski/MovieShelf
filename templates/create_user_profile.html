@@ -4,31 +4,31 @@
 {% block title %} Create Profile {% endblock %}
 {% block content %}
 
-{% if user.is_authenticated %}
-    <br>
-    <h2>Create your own profile in MovieShelf</h2>
-    <br>
-    <div class="form-group">
-        <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="mb-3">
-            {{ form.avatar|as_crispy_field }}
-        </div>
-        <div class="mb-3">
-            {{ form.socials|as_crispy_field }}
-        </div>
-        <div class="mb-3">
-            {{ form.bio|as_crispy_field }}
-        </div>
-        <button style="width:165px;" type="submit" class="btn btn-primary btn-block mb-4">Done
+    {% if user.is_authenticated %}
+        <br>
+        <h2>Create your own profile in MovieShelf</h2>
+        <br>
+        <div class="form-group">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.avatar|as_crispy_field }}
+                </div>
+                <div class="mb-3">
+                    {{ form.socials|as_crispy_field }}
+                </div>
+                <div class="mb-3">
+                    {{ form.bio|as_crispy_field }}
+                </div>
+                <button style="width:165px;" type="submit" class="btn btn-primary btn-block mb-4">Done
                 </button>
-        </form>
-    </div>
+            </form>
+        </div>
 
-{% else %}
-You shouldn't be here (and you know it)!
+    {% else %}
+        You shouldn't be here (and you know it)!
 
-{% endif %}
+    {% endif %}
 
     <style>
         .btn-primary {
@@ -46,6 +46,7 @@ You shouldn't be here (and you know it)!
             box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.25) !important;
 
         }
+
         .form-group #id_avatar {
             width: 520px;
             height: 38px;

@@ -9,72 +9,82 @@
 
 </head>
 <body>
-    {% block navbar %}
+{% block navbar %}
     <nav class="navbar navbar-expand-lg bg-seagreen">
-    <div class="container-fluid">
-        <a class="navbar-brand text-white" href="{% url 'home' %}">MovieShelf</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            {% if user.is_authenticated %}
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item dropdown">
-                        {% if user.profiles.user_id %}
-                            <a class="nav-link dropdown-toggle text-white" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false">Shelf </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 'watched_by_user' user_id=user.pk %}">My Shelf</a></li>
-                                <li><a class="dropdown-item" href="{% url 'to_watch_by_user' user_id=user.pk %}">Wait List</a></li>
-                        </ul>
-                        {% endif %}
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                            Profile
-                        </a>
-                        <ul class="dropdown-menu">
-                            {% if user.profiles.pk %}
-                                <li><a class="dropdown-item" href="{% url 'user_profile' pk=user.pk %}">My Profile</a></li>
-                                <li><a class="dropdown-item" href="{% url 'update_user_profile' pk=user.pk %}">Edit My Profile</a></li>
-                                <li><a class="dropdown-item" href="{% url 'delete_user_profile' pk=user.pk %}">Delete My Profile</a></li>
-                            {% else %}
-                                <li><a class="dropdown-item" href="{% url 'create_user_profile' %}">Create Profile First</a></li>
+        <div class="container-fluid">
+            <a class="navbar-brand text-white" href="{% url 'home' %}">MovieShelf</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                {% if user.is_authenticated %}
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item dropdown">
+                            {% if user.profiles.user_id %}
+                                <a class="nav-link dropdown-toggle text-white" role="button" data-bs-toggle="dropdown"
+                                   aria-expanded="false">Shelf </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'watched_by_user' user_id=user.pk %}">My
+                                        Shelf</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'to_watch_by_user' user_id=user.pk %}">Wait
+                                        List</a></li>
+                                </ul>
                             {% endif %}
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="{% url 'password_change' %}">Change Password</a></li>
-
-                            <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
-                        </ul>
-                    </li>
-                    {% if user.profiles.pk %}
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-white" role="button" data-bs-toggle="dropdown"
                                aria-expanded="false">
-                                Couch
+                                Profile
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 'users_profiles_list' %}">Club members</a></li>
-                                <li><a class="dropdown-item" href="{% url 'random_position' %}">DVD Disc Reader</a></li>
+                                {% if user.profiles.pk %}
+                                    <li><a class="dropdown-item" href="{% url 'user_profile' pk=user.pk %}">My
+                                        Profile</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'update_user_profile' pk=user.pk %}">Edit
+                                        My Profile</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'delete_user_profile' pk=user.pk %}">Delete
+                                        My Profile</a></li>
+                                {% else %}
+                                    <li><a class="dropdown-item" href="{% url 'create_user_profile' %}">Create Profile
+                                        First</a></li>
+                                {% endif %}
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="{% url 'password_change' %}">Change Password</a></li>
+
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
                             </ul>
                         </li>
-                    {% endif %}
-                </ul>
-                </div>
-                </div>
-                </nav>
+                        {% if user.profiles.pk %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white" role="button" data-bs-toggle="dropdown"
+                                   aria-expanded="false">
+                                    Couch
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'users_profiles_list' %}">Club members</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{% url 'random_position' %}">DVD Disc Reader</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    </div>
+                    </div>
+                    </nav>
 
-            {% else %}
-                {% block my_header %} <form class="form-inline ml-auto">
-                    <a href="{% url 'login' %}" class="btn btn-outline-secondary">Log In</a>
-                    <a href="{% url 'sign_up' %}" class="btn btn-primary ml-2">Sign up</a>
-                {% endblock my_header %} </form>
-            {% endif %}
-    {% endblock %}
+                {% else %}
+                    {% block my_header %}
+                        <form class="form-inline ml-auto">
+                        <a href="{% url 'login' %}" class="btn btn-outline-secondary">Log In</a>
+                        <a href="{% url 'sign_up' %}" class="btn btn-primary ml-2">Sign up</a>
+                    {% endblock my_header %} </form>
+                {% endif %}
+{% endblock %}
 <main>
     <div class="container">
         {% block content %}
@@ -91,6 +101,6 @@
 </html>
 <style>
     .bg-seagreen {
-    background-color: black;
-}
+        background-color: black;
+    }
 </style>
