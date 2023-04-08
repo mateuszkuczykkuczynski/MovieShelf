@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # 3rd Party
+    'crispy_forms',
+    'crispy_bootstrap5',
+
     # Local
     'members',
     'scenario',
@@ -164,3 +168,6 @@ EMAIL_POST = os.environ.get('EMAIL_POST')
 EMAIL_USE_TLS = str(os.environ.get('EMAIL_USE_TLS')) == "1"
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
