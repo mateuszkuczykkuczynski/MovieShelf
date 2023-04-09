@@ -4,14 +4,12 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class WatchedForm(forms.ModelForm):
-
     class Meta:
         model = WatchedByUser
         fields = ()
 
 
 class ToWatchForm(forms.ModelForm):
-
     class Meta:
         model = ToWatchByUser
         fields = ()

@@ -53,7 +53,6 @@ class ProfileDetailsView(LoginRequiredMixin, DetailView):
     template_name = 'user_profile_details.html'
 
     def get(self, request, **kwargs):
-
         profile = get_object_or_404(UserProfile, pk=kwargs.get('pk'))
         context = {'profile': profile}
         return render(request, self.template_name, context)
