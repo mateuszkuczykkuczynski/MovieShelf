@@ -20,4 +20,3 @@ urlpatterns = [path('', homepage_view, name='home'),
                path('users/<int:user_id>/watched', PositionsWatchedByUserView.as_view(), name='watched_by_user'),
                path('users/<int:user_id>/to_watch', PositionsToWatchByUserView.as_view(), name='to_watch_by_user'),
                path('random_position', random_position_view, name='random_position')]
-
