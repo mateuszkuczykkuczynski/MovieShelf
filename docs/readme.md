@@ -31,4 +31,4 @@ Project will be refactored because there is some staff missing.
 - Deploy on Cloud Platform 
 - Nicer frontend... 
 
-
+This app will be refactored as i got some comercial experience and in free time i will try to refactor all of my currently added apps.
