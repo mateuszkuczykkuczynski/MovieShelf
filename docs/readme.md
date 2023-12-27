@@ -29,6 +29,6 @@ Project will be refactored because there is some staff missing.
 - Code should be cleaner (some progress on that one)
 - Project structure need refactorization (that one is almost done)
 - Deploy on Cloud Platform 
-- Nicer frontend... 
+- Nicer frontend... (tailwind over bootstrap)
 
 This app will be refactored as i got some comercial experience and in free time i will try to refactor all of my currently added apps.
